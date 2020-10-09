@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MQTT Device Controls</string>
+    <string name="config_file">serverConfig.json</string>
 </resources>

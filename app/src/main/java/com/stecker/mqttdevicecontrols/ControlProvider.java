@@ -6,12 +6,23 @@ import android.service.controls.actions.ControlAction;
 
 import androidx.annotation.NonNull;
 
+import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
+
+import org.reactivestreams.FlowAdapters;
+import org.reactivestreams.Subscriber;
+
+import java.io.FileNotFoundException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 
-public class ControlProvider extends ControlsProviderService {
+import io.reactivex.Flowable;
 
+public class ControlProvider extends ControlsProviderService {
+    SettingsAPI settingsAPI;
+    JSONControlAdaptor jca;
+    String filepath = getFilesDir() + "/";
     /**
      * Publisher for all available controls
      * <p>
@@ -23,7 +34,15 @@ public class ControlProvider extends ControlsProviderService {
     @NonNull
     @Override
     public Flow.Publisher<Control> createPublisherForAllAvailable() {
-        return null;
+        settingsAPI = new SettingsAPI(filepath + getString(R.string.config_file));
+        try {
+            jca = new JSONControlAdaptor(settingsAPI.getSettingsObject());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        return FlowAdapters.toFlowPublisher(Flowable.fromIterable(jca.getDeviceControls()));
     }
 
     /**
