@@ -83,7 +83,7 @@ public class ControlProvider extends ControlsProviderService {
         for (Server server : servers) {
             for (com.stecker.mqttdevicecontrols.settings.Control control : server.controls) {
                 if (controlIds.contains(control.controlID)) {
-                    updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK, new State(false)));
+                    updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK, new State()));
                 }
             }
         }

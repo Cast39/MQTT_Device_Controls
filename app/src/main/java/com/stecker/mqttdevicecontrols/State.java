@@ -16,4 +16,7 @@ public class State {
     public State(float floatState) {
         this.floatState = floatState;
     }
+    public State() {
+
+    }
 }
