@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(1).structure = "Carsten";
         s.controls.get(1).controlID = "1";
         s.controls.get(1).deviceType = 8;
-        s.controls.get(1).MQTTtopic = "home/carsten/deckenlampe";
+        s.controls.get(1).MQTTtopic = "home/carsten/deckenlampe/brightness";
         s.controls.get(1).title = "Lichtschalter";
         s.controls.get(1).subtitle = "Schlafzimmer";
         s.controls.get(1).template.templateType = "rangetemplate";
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(2).structure = "Carsten";
         s.controls.get(2).controlID = "2";
         s.controls.get(2).deviceType = 8;
-        s.controls.get(2).MQTTtopic = "home/carsten/deckenlampe";
+        s.controls.get(2).MQTTtopic = "home/carsten/deckenlampe/switch";
         s.controls.get(2).title = "Lichtschalter";
         s.controls.get(2).subtitle = "Schlafzimmer";
         s.controls.get(2).template.templateType = "toggletemplate";

@@ -12,6 +12,9 @@ import androidx.annotation.NonNull;
 import com.stecker.mqttdevicecontrols.settings.Server;
 import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.reactivestreams.FlowAdapters;
 import org.reactivestreams.Subscriber;
 
@@ -23,6 +26,8 @@ import java.util.function.Consumer;
 
 import io.reactivex.Flowable;
 import io.reactivex.processors.ReplayProcessor;
+
+import static org.eclipse.paho.client.mqttv3.MqttClient.generateClientId;
 
 public class ControlProvider extends ControlsProviderService {
     private ReplayProcessor updatePublisher;
@@ -119,16 +124,36 @@ public class ControlProvider extends ControlsProviderService {
 
                     if (control.template.templateType.equals("toggletemplate")) {
                         BooleanAction action = (BooleanAction) controlAction;
-                        Log.println(Log.ASSERT, "ButtonEvent", Integer.toString(action.getActionType()));
-                        Log.println(Log.ASSERT, "ButtonEvent", Boolean.toString(action.getNewState()));
+                        int state = Control.STATUS_OK;
 
-                        updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK, new State(action.getNewState())));
+                        Log.println(Log.ASSERT, "Link", server.protocol + "://" + server.url + ":" + server.port);
+
+                        MQTTClient mqttClient = new MQTTClient(server.protocol + "://" + server.url + ":" + server.port, "Clienttttt");
+                        mqttClient.sendMqttMessage(getBaseContext(),control.MQTTtopic, "b" + action.getNewState());
+
+                        updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewState())));
 
                     } else if(control.template.templateType.equals("rangetemplate")) {
                         FloatAction action = (FloatAction) controlAction;
-                        Log.println(Log.ASSERT, "ButtonEvent", Integer.toString(action.getActionType()));
-                        Log.println(Log.ASSERT, "ButtonEvent", Float.toString(action.getNewValue()));
-                        updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK, new State(action.getNewValue())));
+
+                        int state = Control.STATUS_OK;
+
+                        try {
+                            MqttClient client = new MqttClient(
+                                    server.protocol + "://" + server.url + ":" + server.port,
+                                    generateClientId());
+                            client.connect();
+
+                            MqttMessage message = new MqttMessage(("" + action.getNewValue()).getBytes());
+                            client.publish(control.MQTTtopic, message);
+
+                            client.disconnect();
+                        } catch (MqttException e) {
+                            state = Control.STATUS_ERROR;
+                            e.printStackTrace();
+                        }
+
+                        updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewValue())));
 
                     } else if(control.template.templateType.equals("togglerangetemplate")) {
                         //TODO
