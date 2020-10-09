@@ -54,16 +54,9 @@ public class MainActivity extends AppCompatActivity {
         Log.println(ASSERT, "serversJSON", testConfig);
         SettingsAPI s = new SettingsAPI(getFilesDir() + "/testConfig.json");
         try {
-            //Log.println(ASSERT, "TEST", "Saving File");
-            //s.saveSettings(testConfig);
-
-            Log.println(ASSERT, "TEST", "Reading File");
-            Log.println(ASSERT, "TEST", s.getSettingsObject().getFirst().url);
-
+            s.saveSettings(getTestConfig());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-
     }
 }
