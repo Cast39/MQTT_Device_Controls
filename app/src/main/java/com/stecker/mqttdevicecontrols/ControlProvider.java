@@ -2,7 +2,9 @@ package com.stecker.mqttdevicecontrols;
 
 import android.service.controls.Control;
 import android.service.controls.ControlsProviderService;
+import android.service.controls.actions.BooleanAction;
 import android.service.controls.actions.ControlAction;
+import android.service.controls.actions.FloatAction;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -18,8 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
-
-import javax.net.ssl.SSLEngineResult;
 
 import io.reactivex.Flowable;
 import io.reactivex.processors.ReplayProcessor;
@@ -83,7 +83,7 @@ public class ControlProvider extends ControlsProviderService {
         for (Server server : servers) {
             for (com.stecker.mqttdevicecontrols.settings.Control control : server.controls) {
                 if (controlIds.contains(control.controlID)) {
-                    updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK));
+                    updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK, new State(false)));
                 }
             }
         }
@@ -104,12 +104,43 @@ public class ControlProvider extends ControlsProviderService {
      * @param consumer
      */
     @Override
-    public void performControlAction(@NonNull String controlId, @NonNull ControlAction action, @NonNull Consumer<Integer> consumer) {
-
+    public void performControlAction(@NonNull String controlId, @NonNull ControlAction controlAction, @NonNull Consumer<Integer> consumer) {
+        LinkedList<Server> servers;
         try {
-            settingsAPI.getSettingsObject();
+            servers = settingsAPI.getSettingsObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            return;
+        }
+        for (Server server: servers) {
+            for (com.stecker.mqttdevicecontrols.settings.Control control: server.controls) {
+                if (controlId.equals(control.controlID)) {
+                    consumer.accept(ControlAction.RESPONSE_OK);
+
+                    if (control.template.templateType.equals("toggletemplate")) {
+                        BooleanAction action = (BooleanAction) controlAction;
+                        Log.println(Log.ASSERT, "ButtonEvent", Integer.toString(action.getActionType()));
+                        Log.println(Log.ASSERT, "ButtonEvent", Boolean.toString(action.getNewState()));
+
+                        updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK, new State(action.getNewState())));
+
+                    } else if(control.template.templateType.equals("rangetemplate")) {
+                        FloatAction action = (FloatAction) controlAction;
+                        Log.println(Log.ASSERT, "ButtonEvent", Integer.toString(action.getActionType()));
+                        Log.println(Log.ASSERT, "ButtonEvent", Float.toString(action.getNewValue()));
+                        updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK, new State(action.getNewValue())));
+
+                    } else if(control.template.templateType.equals("togglerangetemplate")) {
+                        //TODO
+                    } else if(control.template.templateType.equals("temperaturecontroltemplate")) {
+                        //TODO
+                    } else if(control.template.templateType.equals("statelesstemplate")) {
+                        //TODO
+                    } else {
+                        continue;
+                    }
+                }
+            }
         }
     }
 }

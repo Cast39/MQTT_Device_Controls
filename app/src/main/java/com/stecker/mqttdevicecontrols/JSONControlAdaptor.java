@@ -44,30 +44,31 @@ public class JSONControlAdaptor {
         return deviceControls;
     }
 
-    public Control getStatefulDeviceControl(Context ctx, com.stecker.mqttdevicecontrols.settings.Control control, int status) {
+    public Control getStatefulDeviceControl(Context ctx, com.stecker.mqttdevicecontrols.settings.Control control, int status, State state) {
         // Extract Controltemplate
         ControlTemplate ct = null;
         Control c = null;
         if (control.template.templateType.equals("toggletemplate")) {
             ct = new ToggleTemplate(
                     control.controlID + control.template.templateType,
-                    new ControlButton(false, control.template.actionDescription));
+                    new ControlButton(state.booleanState, control.template.actionDescription));
 
         } else if(control.template.templateType.equals("rangetemplate")) {
             ct = new RangeTemplate(
                     control.controlID + control.template.templateType,
                     control.template.minValue,
                     control.template.maxValue,
-                    control.template.minValue + 1,
+                    state.floatState,
                     control.template.stepValue,
                     control.template.formatString);
 
+
         } else if(control.template.templateType.equals("togglerangetemplate")) {
-
+            //TODO
         } else if(control.template.templateType.equals("temperaturecontroltemplate")) {
-
+            //TODO
         } else if(control.template.templateType.equals("statelesstemplate")) {
-
+            //TODO
         } else {
             return null;
         }

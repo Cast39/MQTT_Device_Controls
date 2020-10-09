@@ -2,6 +2,7 @@ package com.stecker.mqttdevicecontrols;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.PendingIntent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,8 +13,6 @@ import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
 
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
-
-import static android.util.Log.ASSERT;
 
 public class MainActivity extends AppCompatActivity {
     public String getTestConfig() {
@@ -37,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(0).template.maxValue = 100.0f;
         s.controls.get(0).template.stepValue = 1.0f;
         s.controls.get(0).template.formatString = "%.0f";
+        s.controls.get(0).PIFlags = PendingIntent.FLAG_UPDATE_CURRENT;
 
         s.controls.add(new Control());
         s.controls.get(1).enabled = true;
@@ -51,6 +51,19 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(1).template.maxValue = 100.0f;
         s.controls.get(1).template.stepValue = 1.0f;
         s.controls.get(1).template.formatString = "%.0f";
+        s.controls.get(1).PIFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+
+        s.controls.add(new Control());
+        s.controls.get(2).enabled = true;
+        s.controls.get(2).structure = "Carsten";
+        s.controls.get(2).controlID = "2";
+        s.controls.get(2).deviceType = 8;
+        s.controls.get(2).MQTTtopic = "home/carsten/deckenlampe";
+        s.controls.get(2).title = "Lichtschalter";
+        s.controls.get(2).subtitle = "Schlafzimmer";
+        s.controls.get(2).template.templateType = "toggletemplate";
+        s.controls.get(2).template.actionDescription = "BUTTON";
+        s.controls.get(2).PIFlags = PendingIntent.FLAG_UPDATE_CURRENT;
 
         servers.add(s);
         Gson gson = new Gson();
