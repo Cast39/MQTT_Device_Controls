@@ -8,8 +8,10 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.stecker.mqttdevicecontrols.settings.Control;
 import com.stecker.mqttdevicecontrols.settings.Server;
+import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
 import com.stecker.mqttdevicecontrols.settings.Structure;
 
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 
 import static android.util.Log.ASSERT;
@@ -50,6 +52,18 @@ public class MainActivity extends AppCompatActivity {
 
         String testConfig = getTestConfig();
         Log.println(ASSERT, "serversJSON", testConfig);
+        SettingsAPI s = new SettingsAPI(getFilesDir() + "/testConfig.json");
+        try {
+            //Log.println(ASSERT, "TEST", "Saving File");
+            //s.saveSettings(testConfig);
+
+            Log.println(ASSERT, "TEST", "Reading File");
+            Log.println(ASSERT, "TEST", s.getSettingsObject().getFirst().url);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
 
     }
 }
