@@ -10,5 +10,5 @@ public class Server {
     public String username;
     public String password;
     public boolean enabled;
-    public LinkedList<Structure> structures = new LinkedList<>();
+    public LinkedList<Control> controls = new LinkedList<>();
 }

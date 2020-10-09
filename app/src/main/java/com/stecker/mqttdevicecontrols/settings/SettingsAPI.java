@@ -47,7 +47,11 @@ public class SettingsAPI {
         JsonReader reader = new JsonReader(new FileReader(filename));
 
         LinkedList<Server> servers = gson.fromJson(reader, REVIEW_TYPE);
-
+        try {
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return servers;
     }
 

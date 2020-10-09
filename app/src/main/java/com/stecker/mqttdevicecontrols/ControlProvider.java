@@ -3,9 +3,11 @@ package com.stecker.mqttdevicecontrols;
 import android.service.controls.Control;
 import android.service.controls.ControlsProviderService;
 import android.service.controls.actions.ControlAction;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.stecker.mqttdevicecontrols.settings.Server;
 import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
 
 import org.reactivestreams.FlowAdapters;
@@ -17,12 +19,38 @@ import java.util.List;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 
+import javax.net.ssl.SSLEngineResult;
+
 import io.reactivex.Flowable;
+import io.reactivex.processors.ReplayProcessor;
 
 public class ControlProvider extends ControlsProviderService {
-    SettingsAPI settingsAPI;
-    JSONControlAdaptor jca;
-    String filepath = getFilesDir() + "/";
+    private ReplayProcessor updatePublisher;
+    SettingsAPI settingsAPI = null;
+    JSONControlAdaptor jca = null;
+    String filepath = null;
+    LinkedList<Server> servers = null;
+
+    public void initControlProvider() {
+        if (filepath == null) {
+            filepath = getBaseContext().getFilesDir() + "/";
+            Log.println(Log.ASSERT, "INFO", "Filepath: " + filepath);
+        }
+        if (settingsAPI == null) {
+            settingsAPI = new SettingsAPI(filepath + getString(R.string.config_file));
+        }
+        if (servers == null) {
+            try {
+                servers = settingsAPI.getSettingsObject();
+            } catch (FileNotFoundException e) {
+                Log.e("Settingsfile", "Settingsfile not Found!");
+            }
+        }
+        if (jca == null) {
+            jca = new JSONControlAdaptor(servers);
+        }
+    }
+
     /**
      * Publisher for all available controls
      * <p>
@@ -34,15 +62,8 @@ public class ControlProvider extends ControlsProviderService {
     @NonNull
     @Override
     public Flow.Publisher<Control> createPublisherForAllAvailable() {
-        settingsAPI = new SettingsAPI(filepath + getString(R.string.config_file));
-        try {
-            jca = new JSONControlAdaptor(settingsAPI.getSettingsObject());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-        return FlowAdapters.toFlowPublisher(Flowable.fromIterable(jca.getDeviceControls()));
+        initControlProvider();
+        return FlowAdapters.toFlowPublisher(Flowable.fromIterable(jca.getStatelessDeviceControls(getBaseContext())));
     }
 
     /**
@@ -57,7 +78,17 @@ public class ControlProvider extends ControlsProviderService {
     @NonNull
     @Override
     public Flow.Publisher<Control> createPublisherFor(@NonNull List<String> controlIds) {
-        return null;
+        initControlProvider();
+        updatePublisher = ReplayProcessor.create();
+        for (Server server : servers) {
+            for (com.stecker.mqttdevicecontrols.settings.Control control : server.controls) {
+                if (controlIds.contains(control.controlID)) {
+                    updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK));
+                }
+            }
+        }
+
+        return FlowAdapters.toFlowPublisher(updatePublisher);
     }
 
     /**
@@ -75,5 +106,10 @@ public class ControlProvider extends ControlsProviderService {
     @Override
     public void performControlAction(@NonNull String controlId, @NonNull ControlAction action, @NonNull Consumer<Integer> consumer) {
 
+        try {
+            settingsAPI.getSettingsObject();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
