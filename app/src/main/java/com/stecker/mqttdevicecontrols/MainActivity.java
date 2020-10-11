@@ -2,12 +2,15 @@ package com.stecker.mqttdevicecontrols;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.PendingIntent;
 import android.os.Bundle;
 import android.service.controls.DeviceTypes;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.stecker.mqttdevicecontrols.settings.Control;
 import com.stecker.mqttdevicecontrols.settings.Server;
 import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
@@ -16,6 +19,9 @@ import java.io.FileNotFoundException;
 import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity {
+    public String configFile;
+    public Gson gson = new Gson();
+
     public String getTestConfig() {
         LinkedList<Server> servers = new LinkedList<>();
         Server s = new Server();
@@ -79,19 +85,57 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         return gson.toJson(servers);
     }
+    public SettingsAPI initConfigFile() {
+        configFile = getFilesDir() + "/" + getString(R.string.config_file);
+        SettingsAPI settingsAPI = new SettingsAPI(configFile);
+        try {
+            settingsAPI.getSettingsObject();
+            Log.println(Log.ASSERT, "Config File", "Found existing config file!");
+        } catch (FileNotFoundException e) {
+            Log.println(Log.ASSERT, "ConfigFile", "Couldn't find existing config file!");
+
+            if (settingsAPI.saveSettings(getTestConfig())) {
+                Log.println(Log.ASSERT, "ConfigFile", "Created default config file!");
+            } else {
+                Log.println(Log.ASSERT, "ConfigFile", "Unable to create config file!");
+            }
+        }
+        return settingsAPI;
+    }
+
+    public void initUI(final SettingsAPI s) {
+        EditText editor = findViewById(R.id.configfileeditor);
+        try {
+            editor.setText(s.getSettingsText(true));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Button saveButton = findViewById(R.id.saveButton);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText editor = findViewById(R.id.configfileeditor);
+                String text = editor.getText().toString();
+                try {
+                    gson.fromJson(text, Object.class);
+                    s.saveSettings(text);
+                    Log.println(Log.ASSERT, "Settings", "Settings Saved!");
+                } catch (JsonSyntaxException jse) {
+                    Log.println(Log.ASSERT, "Settings", "HOW DARE YOU");
+
+                }
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String testConfig = getTestConfig();
-        Log.println(Log.ASSERT, "serversJSON", testConfig);
-        SettingsAPI s = new SettingsAPI(getFilesDir() + "/" + getString(R.string.config_file));
-        try {
-            s.saveSettings(getTestConfig());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        SettingsAPI s = initConfigFile();
+
+        initUI(s);
     }
 }
