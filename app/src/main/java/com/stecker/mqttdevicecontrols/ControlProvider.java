@@ -27,9 +27,9 @@ import io.reactivex.processors.ReplayProcessor;
 public class ControlProvider extends ControlsProviderService {
     private ReplayProcessor updatePublisher;
     SettingsAPI settingsAPI = null;
+    LinkedList<Server> servers;
     JSONControlAdaptor jca = null;
     String filepath = null;
-    LinkedList<Server> servers = null;
     String mqttClientID = "Temporär von externer Stromversorgung unabhängiges Gerät zu Sprachfernübertragung";
 
     public void initControlProvider() {
@@ -40,15 +40,8 @@ public class ControlProvider extends ControlsProviderService {
         if (settingsAPI == null) {
             settingsAPI = new SettingsAPI(filepath + getString(R.string.config_file));
         }
-        if (servers == null) {
-            try {
-                servers = settingsAPI.getSettingsObject();
-            } catch (FileNotFoundException e) {
-                Log.e("Settingsfile", "Settingsfile not Found!");
-            }
-        }
         if (jca == null) {
-            jca = new JSONControlAdaptor(servers);
+            jca = new JSONControlAdaptor(settingsAPI);
         }
     }
 
@@ -80,6 +73,14 @@ public class ControlProvider extends ControlsProviderService {
     @Override
     public Flow.Publisher<Control> createPublisherFor(@NonNull List<String> controlIds) {
         initControlProvider();
+
+        try {
+            servers = settingsAPI.getSettingsObject();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+
         updatePublisher = ReplayProcessor.create();
         for (Server server : servers) {
             for (com.stecker.mqttdevicecontrols.settings.Control control : server.controls) {

@@ -11,18 +11,26 @@ import android.service.controls.templates.ToggleTemplate;
 import android.util.Log;
 
 import com.stecker.mqttdevicecontrols.settings.Server;
+import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
 
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 
 // Reads the JSON server File and creates Device Controls Accordingly
 public class JSONControlAdaptor {
+    SettingsAPI settingsAPI;
     LinkedList<Server> servers;
 
-    public JSONControlAdaptor(LinkedList<Server> servers) {
-        this.servers = servers;
+    public JSONControlAdaptor(SettingsAPI settingsAPI) {
+        this.settingsAPI = settingsAPI;
     }
 
     public LinkedList<Control> getStatelessDeviceControls(Context ctx) {
+        try {
+            servers = settingsAPI.getSettingsObject();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         LinkedList<Control> deviceControls = new LinkedList<>();
         for (Server server: servers) {
             if (server.enabled) {
