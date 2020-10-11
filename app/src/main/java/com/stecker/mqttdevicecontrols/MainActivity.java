@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -121,9 +122,10 @@ public class MainActivity extends AppCompatActivity {
                     gson.fromJson(text, Object.class);
                     s.saveSettings(text);
                     Log.println(Log.ASSERT, "Settings", "Settings Saved!");
+                    Toast.makeText(getBaseContext(), "Settings Saved!", Toast.LENGTH_SHORT).show();
                 } catch (JsonSyntaxException jse) {
                     Log.println(Log.ASSERT, "Settings", "HOW DARE YOU");
-
+                    Toast.makeText(getBaseContext(), "Invalid JSON!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
