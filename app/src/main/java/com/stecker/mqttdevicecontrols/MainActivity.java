@@ -60,11 +60,47 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(2).controlID = "2";
         s.controls.get(2).deviceType = DeviceTypes.TYPE_OUTLET;
         s.controls.get(2).MQTTtopic = "home/carsten/steckdose1/state";
-        s.controls.get(2).title = "Steckdose 1";
+        s.controls.get(2).title = "\uD83D\uDE3B";
         s.controls.get(2).subtitle = "Schlafzimmer";
         s.controls.get(2).template.templateType = "toggletemplate";
         s.controls.get(2).template.actionDescription = "BUTTON";
         s.controls.get(2).PIFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+
+        s.controls.add(new Control());
+        s.controls.get(3).enabled = true;
+        s.controls.get(3).structure = "Clemens";
+        s.controls.get(3).controlID = "3";
+        s.controls.get(3).deviceType = DeviceTypes.TYPE_OUTLET;
+        s.controls.get(3).MQTTtopic = "home/carsten/steckdose1/state";
+        s.controls.get(3).title = "\uD83D\uDE3B";
+        s.controls.get(3).subtitle = "Schlafzimmer";
+        s.controls.get(3).template.templateType = "toggletemplate";
+        s.controls.get(3).template.actionDescription = "BUTTON";
+        s.controls.get(3).PIFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+
+        s.controls.add(new Control());
+        s.controls.get(4).enabled = true;
+        s.controls.get(4).structure = "Living Room";
+        s.controls.get(4).controlID = "4";
+        s.controls.get(4).deviceType = DeviceTypes.TYPE_OUTLET;
+        s.controls.get(4).MQTTtopic = "home/carsten/steckdose1/state";
+        s.controls.get(4).title = "\uD83D\uDE3B";
+        s.controls.get(4).subtitle = "Schlafzimmer";
+        s.controls.get(4).template.templateType = "toggletemplate";
+        s.controls.get(4).template.actionDescription = "BUTTON";
+        s.controls.get(4).PIFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+
+        s.controls.add(new Control());
+        s.controls.get(5).enabled = true;
+        s.controls.get(5).structure = "Dining Room";
+        s.controls.get(5).controlID = "5";
+        s.controls.get(5).deviceType = DeviceTypes.TYPE_OUTLET;
+        s.controls.get(5).MQTTtopic = "home/carsten/steckdose1/state";
+        s.controls.get(5).title = "\uD83D\uDE3B";
+        s.controls.get(5).subtitle = "Schlafzimmer";
+        s.controls.get(5).template.templateType = "toggletemplate";
+        s.controls.get(5).template.actionDescription = "BUTTON";
+        s.controls.get(5).PIFlags = PendingIntent.FLAG_UPDATE_CURRENT;
 
         servers.add(s);
         Gson gson = new Gson();
