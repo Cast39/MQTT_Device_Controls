@@ -30,6 +30,7 @@ public class ControlProvider extends ControlsProviderService {
     JSONControlAdaptor jca = null;
     String filepath = null;
     LinkedList<Server> servers = null;
+    String mqttClientID = "Temporär von externer Stromversorgung unabhängiges Gerät zu Sprachfernübertragung";
 
     public void initControlProvider() {
         if (filepath == null) {
@@ -120,10 +121,6 @@ public class ControlProvider extends ControlsProviderService {
                     Log.println(Log.ASSERT, "TAG", controlId);
                     consumer.accept(ControlAction.RESPONSE_OK);
                     String uri = server.protocol + "://" + server.url + ":" + server.port;
-                    for (int i = 0; i < uri.length(); i++) {
-                        Log.println(Log.ASSERT, "Uri:", Integer.toString((int) uri.charAt(i)) + " " + Integer.toString((int) "tcp://192.168.178.25:1883".charAt(i)));
-                    }
-
 
                     if (control.template.templateType.equals("toggletemplate")) {
                         BooleanAction action = (BooleanAction) controlAction;
@@ -132,7 +129,7 @@ public class ControlProvider extends ControlsProviderService {
                         Log.println(Log.ASSERT, "Link", uri);
 
                         // MQTT stuff
-                        mqttClient = new MQTTClient(uri, "clientttasdfrnt" + System.currentTimeMillis());
+                        mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
                         mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Boolean.toString(action.getNewState()));
 
                         updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewState())));
@@ -143,7 +140,7 @@ public class ControlProvider extends ControlsProviderService {
                         int state = Control.STATUS_OK;
 
                         // MQTT stuff
-                        mqttClient = new MQTTClient(uri, "clientttasdfrnt" + System.currentTimeMillis());
+                        mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
                         mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(action.getNewValue()));
 
                         updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewValue())));
