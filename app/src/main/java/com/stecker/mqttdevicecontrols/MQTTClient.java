@@ -43,7 +43,7 @@ public class MQTTClient {
                     disconnectedBufferOptions.setDeleteOldestMessages(false);
                     mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
                     try {
-                        mqttAndroidClient.publish(topic, message.getBytes(), 0, false);
+                        mqttAndroidClient.publish(topic, message.getBytes(), 0, true);
                         mqttAndroidClient.disconnect();
                         Log.println(Log.ASSERT, topic, "sent!");
                     } catch (MqttException e) {

@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
         s.enabled = true;
         s.port = 1883;
-        s.url = "192.168.178.25";
+        s.url = "test.mosquitto.org";
         s.protocol = "tcp";
         s.controls.add(new Control());
         s.controls.get(0).enabled = true;
