@@ -8,7 +8,7 @@ public class Template {
 
     // RangeTemplate
     public float minValue = 0.0f;
-    public float maxValue = 1000.0f;
+    public float maxValue = 100.0f;
     public float stepValue = 1.0f;
     public String formatString = "%.0f"; // eg 100.0 / 50.0
 
