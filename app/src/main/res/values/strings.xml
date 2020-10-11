@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MQTT Device Controls</string>
     <string name="config_file">testConfig.json</string>
+    <string name="SaveButtonText">apply</string>
 </resources>
