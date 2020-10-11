@@ -8,6 +8,7 @@ import android.service.controls.templates.ControlButton;
 import android.service.controls.templates.ControlTemplate;
 import android.service.controls.templates.RangeTemplate;
 import android.service.controls.templates.ToggleTemplate;
+import android.util.Log;
 
 import com.stecker.mqttdevicecontrols.settings.Server;
 
@@ -65,11 +66,15 @@ public class JSONControlAdaptor {
 
         } else if(control.template.templateType.equals("togglerangetemplate")) {
             //TODO
+            Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
         } else if(control.template.templateType.equals("temperaturecontroltemplate")) {
             //TODO
+            Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
         } else if(control.template.templateType.equals("statelesstemplate")) {
             //TODO
+            Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
         } else {
+            Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
             return null;
         }
         PendingIntent pi = PendingIntent.getActivity(ctx, 1, new Intent(), control.PIFlags);
