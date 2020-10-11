@@ -2,10 +2,13 @@ package com.stecker.mqttdevicecontrols.settings;
 
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -37,10 +40,46 @@ public class SettingsAPI {
 
         saveSettings(gson.toJson(servers));
     }
-    public void saveSettings(String settings) throws FileNotFoundException {
-        PrintStream ps = new PrintStream(f);
-        ps.print(settings);
-        ps.close();
+
+    public boolean saveSettings(String settings) throws JsonSyntaxException {
+        gson.fromJson(settings, Object.class);
+        if (!f.exists()) {
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+                return false;
+            }
+        }
+        try {
+            PrintStream ps = new PrintStream(f);
+            ps.print(settings);
+            ps.close();
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public String getSettingsText(boolean beautymode) throws FileNotFoundException {
+        if (beautymode) {
+            Gson beautygson = new GsonBuilder().setPrettyPrinting().create();
+            return beautygson.toJson(getSettingsObject());
+        } else {
+            String settingsText = "";
+            if (f.exists() && f.canRead()) {
+                try {
+                    FileInputStream fis = new FileInputStream(f);
+                    StringBuilder sb = new StringBuilder();
+                    while (fis.available() > 0) {
+                        sb.append((char) fis.read());
+                    }
+                    settingsText = sb.toString();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return settingsText;
+        }
     }
 
     public LinkedList<Server> getSettingsObject() throws FileNotFoundException {
