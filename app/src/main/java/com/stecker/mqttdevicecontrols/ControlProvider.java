@@ -12,9 +12,6 @@ import androidx.annotation.NonNull;
 import com.stecker.mqttdevicecontrols.settings.Server;
 import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.reactivestreams.FlowAdapters;
 import org.reactivestreams.Subscriber;
 
@@ -26,8 +23,6 @@ import java.util.function.Consumer;
 
 import io.reactivex.Flowable;
 import io.reactivex.processors.ReplayProcessor;
-
-import static org.eclipse.paho.client.mqttv3.MqttClient.generateClientId;
 
 public class ControlProvider extends ControlsProviderService {
     private ReplayProcessor updatePublisher;
@@ -110,56 +105,54 @@ public class ControlProvider extends ControlsProviderService {
      */
     @Override
     public void performControlAction(@NonNull String controlId, @NonNull ControlAction controlAction, @NonNull Consumer<Integer> consumer) {
+        initControlProvider();
         LinkedList<Server> servers;
+        MQTTClient mqttClient;
         try {
             servers = settingsAPI.getSettingsObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return;
         }
-        for (Server server: servers) {
-            for (com.stecker.mqttdevicecontrols.settings.Control control: server.controls) {
+        for (Server server : servers) {
+            for (final com.stecker.mqttdevicecontrols.settings.Control control : server.controls) {
                 if (controlId.equals(control.controlID)) {
+                    Log.println(Log.ASSERT, "TAG", controlId);
                     consumer.accept(ControlAction.RESPONSE_OK);
+                    String uri = server.protocol + "://" + server.url + ":" + server.port;
+                    for (int i = 0; i < uri.length(); i++) {
+                        Log.println(Log.ASSERT, "Uri:", Integer.toString((int) uri.charAt(i)) + " " + Integer.toString((int) "tcp://192.168.178.25:1883".charAt(i)));
+                    }
+
 
                     if (control.template.templateType.equals("toggletemplate")) {
                         BooleanAction action = (BooleanAction) controlAction;
                         int state = Control.STATUS_OK;
 
-                        Log.println(Log.ASSERT, "Link", server.protocol + "://" + server.url + ":" + server.port);
+                        Log.println(Log.ASSERT, "Link", uri);
 
-                        MQTTClient mqttClient = new MQTTClient(server.protocol + "://" + server.url + ":" + server.port, "Clienttttt");
-                        mqttClient.sendMqttMessage(getBaseContext(),control.MQTTtopic, "b" + action.getNewState());
+                        // MQTT stuff
+                        mqttClient = new MQTTClient(uri, "clientttasdfrnt" + System.currentTimeMillis());
+                        mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Boolean.toString(action.getNewState()));
 
                         updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewState())));
 
-                    } else if(control.template.templateType.equals("rangetemplate")) {
+                    } else if (control.template.templateType.equals("rangetemplate")) {
                         FloatAction action = (FloatAction) controlAction;
 
                         int state = Control.STATUS_OK;
 
-                        try {
-                            MqttClient client = new MqttClient(
-                                    server.protocol + "://" + server.url + ":" + server.port,
-                                    generateClientId());
-                            client.connect();
-
-                            MqttMessage message = new MqttMessage(("" + action.getNewValue()).getBytes());
-                            client.publish(control.MQTTtopic, message);
-
-                            client.disconnect();
-                        } catch (MqttException e) {
-                            state = Control.STATUS_ERROR;
-                            e.printStackTrace();
-                        }
+                        // MQTT stuff
+                        mqttClient = new MQTTClient(uri, "clientttasdfrnt" + System.currentTimeMillis());
+                        mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(action.getNewValue()));
 
                         updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewValue())));
 
-                    } else if(control.template.templateType.equals("togglerangetemplate")) {
+                    } else if (control.template.templateType.equals("togglerangetemplate")) {
                         //TODO
-                    } else if(control.template.templateType.equals("temperaturecontroltemplate")) {
+                    } else if (control.template.templateType.equals("temperaturecontroltemplate")) {
                         //TODO
-                    } else if(control.template.templateType.equals("statelesstemplate")) {
+                    } else if (control.template.templateType.equals("statelesstemplate")) {
                         //TODO
                     } else {
                         continue;

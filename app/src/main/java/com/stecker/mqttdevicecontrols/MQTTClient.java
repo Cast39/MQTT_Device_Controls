@@ -21,11 +21,13 @@ public class MQTTClient {
     }
 
     public void sendMqttMessage(Context ctx, final String topic, final String message) {
+        Log.println(Log.ASSERT, topic, "Sending Message");
         final MqttAndroidClient mqttAndroidClient = new MqttAndroidClient(ctx, serverUri, clientId);
 
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setAutomaticReconnect(true);
         mqttConnectOptions.setCleanSession(false);
+        mqttConnectOptions.setConnectionTimeout(5);
 
         try {
             MqttMessage m = new MqttMessage();
@@ -43,6 +45,7 @@ public class MQTTClient {
                     try {
                         mqttAndroidClient.publish(topic, message.getBytes(), 0, false);
                         mqttAndroidClient.disconnect();
+                        Log.println(Log.ASSERT, topic, "sent!");
                     } catch (MqttException e) {
                         e.printStackTrace();
                     }
