@@ -21,6 +21,15 @@
         android:id="@+id/saveButton"
         />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ResetButtonText"
+        android:layout_toRightOf="@+id/saveButton"
+        android:id="@+id/resetButton"
+        android:shadowColor="@android:color/holo_red_dark"
+        />
+
     <EditText
         android:id="@+id/configfileeditor"
         android:layout_width="match_parent"
