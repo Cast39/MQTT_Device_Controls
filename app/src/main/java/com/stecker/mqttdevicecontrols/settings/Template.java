@@ -1,20 +1,21 @@
 package com.stecker.mqttdevicecontrols.settings;
 
 public class Template {
-    public String templateType = ""; // toggletemplate, rangetemplate, togglerangetemplate, temperaturecontroltemplate, statelesstemplate
-
-    // ToggleTemplate
-    public String actionDescription = "";
-
-    // RangeTemplate
-    public float minValue = 0.0f;
-    public float maxValue = 100.0f;
-    public float stepValue = 1.0f;
-    public String formatString = "%.0f"; // eg 100.0 / 50.0
+    public String templateType = "undefined"; // toggletemplate, rangetemplate, togglerangetemplate, temperaturecontroltemplate, statelesstemplate
 
     // TemperatureControlTemplate
-    public int currentMode;
-    public int currentActiveMode;
-    public int modesFlag;
+    public Integer currentMode = null;
+    public Integer currentActiveMode = null;
+    public Integer modesFlag = null;
 
+    // RangeTemplate
+    public Float minValue = null;
+    public Float maxValue = null;
+    public Float stepValue = null;
+    public String formatString = null;
+
+    // ToggleTemplate
+    public String actionDescription = null;
+    public String onValue = null;
+    public String offValue = null;
 }

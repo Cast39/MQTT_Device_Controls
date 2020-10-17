@@ -12,5 +12,5 @@ public class Control {
     public String subtitle = "";
     public String structure = "Default";
     public int PIFlags = PendingIntent.FLAG_UPDATE_CURRENT; // flags for pending Intent
-    public Template template = new Template();
+    public Template template;
 }
