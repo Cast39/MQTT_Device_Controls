@@ -129,6 +129,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        Button resetButton = findViewById(R.id.resetButton);
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                s.saveSettings(getTestConfig());
+                EditText editor = findViewById(R.id.configfileeditor);
+                try {
+                    editor.setText(s.getSettingsText(true));
+                } catch (FileNotFoundException e) {
+                    editor.setText("Error while reading Settings");
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
