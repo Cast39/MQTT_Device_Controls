@@ -133,9 +133,9 @@ public class ControlProvider extends ControlsProviderService {
                             // MQTT stuff
                             String message = "";
                             if (action.getNewState()) {
-                                message = control.template.onValue;
+                                message = control.template.onCommand;
                             } else {
-                                message = control.template.offValue;
+                                message = control.template.offCommand;
                             }
 
                             if (!message.equals("")) {
@@ -172,6 +172,7 @@ public class ControlProvider extends ControlsProviderService {
                         default:
                             continue;
                     }
+                    break;
                 }
             }
         }

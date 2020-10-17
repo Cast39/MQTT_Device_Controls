@@ -16,6 +16,9 @@ public class Template {
 
     // ToggleTemplate
     public String actionDescription = null;
-    public String onValue = null;
-    public String offValue = null;
+    public String onCommand = null;
+    public String offCommand = null;
+
+    // StatelessTemplate
+    public String command = null;
 }

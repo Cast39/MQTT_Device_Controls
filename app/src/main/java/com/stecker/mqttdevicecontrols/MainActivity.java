@@ -17,6 +17,7 @@ import com.stecker.mqttdevicecontrols.settings.Control;
 import com.stecker.mqttdevicecontrols.settings.Rangetemplate;
 import com.stecker.mqttdevicecontrols.settings.Server;
 import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
+import com.stecker.mqttdevicecontrols.settings.Statelesstemplate;
 import com.stecker.mqttdevicecontrols.settings.Toggletemplate;
 
 import java.io.FileNotFoundException;
@@ -66,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(3).title = "\uD83D\uDE3B";
         s.controls.get(3).template = new Toggletemplate();
         s.controls.get(3).template.actionDescription = "BUTTON";
-        s.controls.get(3).template.onValue = "on";
-        s.controls.get(3).template.offValue = "off";
+        s.controls.get(3).template.onCommand = "on";
+        s.controls.get(3).template.offCommand = "off";
 
         s.controls.add(new Control());
         s.controls.get(4).structure = "Living Room";

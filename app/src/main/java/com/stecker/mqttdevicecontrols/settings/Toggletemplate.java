@@ -4,7 +4,7 @@ public class Toggletemplate extends Template {
     public Toggletemplate() {
         super.templateType = "toggletemplate";
         super.actionDescription = "";
-        super.onValue = "true";
-        super.offValue = "false";
+        super.onCommand = "true";
+        super.offCommand = "false";
     }
 }
