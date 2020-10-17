@@ -84,11 +84,20 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(5).controlID = "5";
         s.controls.get(5).deviceType = DeviceTypes.TYPE_LIGHT;
         s.controls.get(5).MQTTtopic = "home/dining_room/ceilinglamp/state";
-        s.controls.get(5).title = "Deckenlampe";
+        s.controls.get(5).title = "ToggleDeckenlampe";
         s.controls.get(5).template = new Toggletemplate();
         s.controls.get(5).template.actionDescription = "BUTTON";
-        s.controls.get(5).template.onValue = "switch mode!";
-        s.controls.get(5).template.offValue = "";
+        s.controls.get(5).template.onCommand = "switch mode!";
+        s.controls.get(5).template.offCommand = "";
+
+        s.controls.add(new Control());
+        s.controls.get(6).structure = "Dining Room";
+        s.controls.get(6).controlID = "6";
+        s.controls.get(6).deviceType = DeviceTypes.TYPE_LIGHT;
+        s.controls.get(6).MQTTtopic = "home/dining_room/ceilinglamp/state2";
+        s.controls.get(6).title = "StatelessDeckenlampe";
+        s.controls.get(6).template = new Statelesstemplate();
+        s.controls.get(6).template.command = "switch mode!";
 
         servers.add(s);
         Gson gson = new Gson();

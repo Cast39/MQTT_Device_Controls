@@ -167,7 +167,19 @@ public class ControlProvider extends ControlsProviderService {
                             //TODO
                             break;
                         case "statelesstemplate":
-                            //TODO
+                            int state = Control.STATUS_OK;
+
+                            Log.println(Log.ASSERT, "Link", uri);
+
+                            // MQTT stuff
+                            String message = control.template.command;
+
+                            if (!message.equals("")) {
+                                mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
+                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message);
+                            }
+
+                            updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State()));
                             break;
                         default:
                             continue;

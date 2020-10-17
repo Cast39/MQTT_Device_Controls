@@ -7,6 +7,7 @@ import android.service.controls.Control;
 import android.service.controls.templates.ControlButton;
 import android.service.controls.templates.ControlTemplate;
 import android.service.controls.templates.RangeTemplate;
+import android.service.controls.templates.StatelessTemplate;
 import android.service.controls.templates.ToggleTemplate;
 import android.util.Log;
 
@@ -56,7 +57,7 @@ public class JSONControlAdaptor {
     public Control getStatefulDeviceControl(Context ctx, com.stecker.mqttdevicecontrols.settings.Control control, int status, State state) {
         // Extract Controltemplate
         ControlTemplate ct = null;
-        Control c = null;
+
         if (control.template.templateType.equals("toggletemplate")) {
             ct = new ToggleTemplate(
                     control.controlID + control.template.templateType,
@@ -75,12 +76,14 @@ public class JSONControlAdaptor {
         } else if(control.template.templateType.equals("togglerangetemplate")) {
             //TODO
             Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
+
         } else if(control.template.templateType.equals("temperaturecontroltemplate")) {
             //TODO
             Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
-        } else if(control.template.templateType.equals("statelesstemplate")) {
-            //TODO
-            Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
+
+        } else if (control.template.templateType.equals("statelesstemplate")) {
+            ct = new StatelessTemplate(control.controlID + control.template.templateType);
+
         } else {
             Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
             return null;
