@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     public String configFile;
     public Gson gson = new Gson();
 
-    public String getBaseConfig() {
+    public LinkedList<Server> getBaseConfig() {
         LinkedList<Server> servers = new LinkedList<>();
         Server s = new Server();
         s.url = "test.mosquitto.org";
@@ -42,10 +42,10 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(0).template = new Toggletemplate();
 
         servers.add(s);
-        return gson.toJson(servers);
+        return servers;
     }
 
-    public String getTestConfig() {
+    public LinkedList<Server> getTestConfig() {
         LinkedList<Server> servers = new LinkedList<>();
         Server s = new Server();
         s.url = "test.mosquitto.org";
@@ -118,8 +118,9 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(6).template.command = "switch mode!";
 
         servers.add(s);
-        return gson.toJson(servers);
+        return servers;
     }
+
     public SettingsAPI initConfigFile() {
         configFile = getFilesDir() + "/" + getString(R.string.config_file);
         SettingsAPI settingsAPI = new SettingsAPI(configFile);
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             Log.println(Log.ASSERT, "ConfigFile", "Couldn't find existing config file!");
 
-            if (settingsAPI.saveSettings(getTestConfig())) {
+            if (settingsAPI.saveSettings(gson.toJson(getTestConfig()))) {
                 Log.println(Log.ASSERT, "ConfigFile", "Created default config file!");
             } else {
                 Log.println(Log.ASSERT, "ConfigFile", "Unable to create config file!");
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
     public void initUI(final SettingsAPI s) {
         EditText editor = findViewById(R.id.configfileeditor);
         try {
-            editor.setText(s.getSettingsText(true));
+            editor.setText(s.JSONBeautyfier(s.getSettingsObject()));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -163,19 +164,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         Button resetButton = findViewById(R.id.resetButton);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                s.saveSettings(getTestConfig());
-
                 EditText editor = findViewById(R.id.configfileeditor);
-                try {
-                    editor.setText(s.getSettingsText(true));
-                } catch (FileNotFoundException e) {
-                    editor.setText("Error while reading Settings");
-                    e.printStackTrace();
-                }
+                editor.setText(s.JSONBeautyfier(getTestConfig()));
             }
         });
 
@@ -183,15 +178,8 @@ public class MainActivity extends AppCompatActivity {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                s.saveSettings(getBaseConfig());
-
                 EditText editor = findViewById(R.id.configfileeditor);
-                try {
-                    editor.setText(s.getSettingsText(true));
-                } catch (FileNotFoundException e) {
-                    editor.setText("Error while reading Settings");
-                    e.printStackTrace();
-                }
+                editor.setText(s.JSONBeautyfier(getBaseConfig()));
             }
         });
     }

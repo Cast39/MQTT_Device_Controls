@@ -60,26 +60,26 @@ public class SettingsAPI {
         return true;
     }
 
-    public String getSettingsText(boolean beautymode) throws FileNotFoundException {
-        if (beautymode) {
-            Gson beautygson = new GsonBuilder().setPrettyPrinting().create();
-            return beautygson.toJson(getSettingsObject());
-        } else {
-            String settingsText = "";
-            if (f.exists() && f.canRead()) {
-                try {
-                    FileInputStream fis = new FileInputStream(f);
-                    StringBuilder sb = new StringBuilder();
-                    while (fis.available() > 0) {
-                        sb.append((char) fis.read());
-                    }
-                    settingsText = sb.toString();
-                } catch (IOException e) {
-                    e.printStackTrace();
+    public String JSONBeautyfier(LinkedList<Server> servers) {
+        Gson beautygson = new GsonBuilder().setPrettyPrinting().create();
+        return beautygson.toJson(servers);
+    }
+
+    public String getSettingsText() {
+        String settingsText = "";
+        if (f.exists() && f.canRead()) {
+            try {
+                FileInputStream fis = new FileInputStream(f);
+                StringBuilder sb = new StringBuilder();
+                while (fis.available() > 0) {
+                    sb.append((char) fis.read());
                 }
+                settingsText = sb.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            return settingsText;
         }
+        return settingsText;
     }
 
     public LinkedList<Server> getSettingsObject() throws FileNotFoundException {
