@@ -2,6 +2,7 @@
     <string name="app_name">MQTT Device Controls</string>
     <string name="config_file">testConfig.json</string>
     <string name="SaveButtonText">apply</string>
-    <string name="ResetButtonText">reset</string>
-    <string name="ClearButtonText">clear</string>
+    <string name="ResetButtonText">testconfig</string>
+    <string name="ClearButtonText">minimal config</string>
+    <string name="ReadButtonText">read current config</string>
 </resources>

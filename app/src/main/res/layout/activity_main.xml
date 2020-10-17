@@ -11,13 +11,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Config File"/>
+        android:text="Config File Editor"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/SaveButtonText"
-        android:layout_toRightOf="@+id/textView"
+        android:layout_below="@+id/textView"
         android:id="@+id/saveButton"
         />
 
@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ResetButtonText"
-        android:layout_toRightOf="@+id/saveButton"
+        android:layout_below="@+id/saveButton"
         android:id="@+id/resetButton"
         />
 
@@ -33,8 +33,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ClearButtonText"
-        android:layout_toRightOf="@+id/resetButton"
+        android:layout_below="@+id/saveButton"
+        android:layout_toEndOf="@+id/resetButton"
         android:id="@+id/clearButton"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ReadButtonText"
+        android:layout_below="@+id/textView"
+        android:layout_toEndOf="@+id/saveButton"
+        android:id="@+id/readButton"
         />
 
     <EditText
@@ -43,5 +52,5 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:background="@android:color/darker_gray"
-        android:layout_below="@+id/saveButton"/>
+        android:layout_below="@+id/clearButton"/>
 </RelativeLayout>

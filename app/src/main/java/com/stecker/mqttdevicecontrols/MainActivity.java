@@ -182,6 +182,20 @@ public class MainActivity extends AppCompatActivity {
                 editor.setText(s.JSONBeautyfier(getBaseConfig()));
             }
         });
+
+        Button readButton = findViewById(R.id.readButton);
+        readButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText editor = findViewById(R.id.configfileeditor);
+                try {
+                    editor.setText(s.JSONBeautyfier(s.getSettingsObject()));
+                } catch (FileNotFoundException e) {
+                    editor.setText("Error while reading Settings");
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
