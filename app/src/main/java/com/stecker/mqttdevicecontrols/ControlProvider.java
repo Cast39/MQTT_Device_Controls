@@ -123,37 +123,54 @@ public class ControlProvider extends ControlsProviderService {
                     consumer.accept(ControlAction.RESPONSE_OK);
                     String uri = server.protocol + "://" + server.url + ":" + server.port;
 
-                    if (control.template.templateType.equals("toggletemplate")) {
-                        BooleanAction action = (BooleanAction) controlAction;
-                        int state = Control.STATUS_OK;
+                    switch (control.template.templateType) {
+                        case "toggletemplate": {
+                            BooleanAction action = (BooleanAction) controlAction;
+                            int state = Control.STATUS_OK;
 
-                        Log.println(Log.ASSERT, "Link", uri);
+                            Log.println(Log.ASSERT, "Link", uri);
 
-                        // MQTT stuff
-                        mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
-                        mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Boolean.toString(action.getNewState()));
+                            // MQTT stuff
+                            String message = "";
+                            if (action.getNewState()) {
+                                message = control.template.onValue;
+                            } else {
+                                message = control.template.offValue;
+                            }
 
-                        updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewState())));
+                            if (!message.equals("")) {
+                                mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
+                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message);
+                            }
 
-                    } else if (control.template.templateType.equals("rangetemplate")) {
-                        FloatAction action = (FloatAction) controlAction;
+                            updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewState())));
 
-                        int state = Control.STATUS_OK;
+                            break;
+                        }
+                        case "rangetemplate": {
+                            FloatAction action = (FloatAction) controlAction;
 
-                        // MQTT stuff
-                        mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
-                        mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(action.getNewValue()));
+                            int state = Control.STATUS_OK;
 
-                        updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewValue())));
+                            // MQTT stuff
+                            mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
+                            mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(action.getNewValue()));
 
-                    } else if (control.template.templateType.equals("togglerangetemplate")) {
-                        //TODO
-                    } else if (control.template.templateType.equals("temperaturecontroltemplate")) {
-                        //TODO
-                    } else if (control.template.templateType.equals("statelesstemplate")) {
-                        //TODO
-                    } else {
-                        continue;
+                            updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewValue())));
+
+                            break;
+                        }
+                        case "togglerangetemplate":
+                            //TODO
+                            break;
+                        case "temperaturecontroltemplate":
+                            //TODO
+                            break;
+                        case "statelesstemplate":
+                            //TODO
+                            break;
+                        default:
+                            continue;
                     }
                 }
             }

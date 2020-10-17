@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.service.controls.DeviceTypes;
+import android.service.controls.templates.ToggleTemplate;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,8 +14,10 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.stecker.mqttdevicecontrols.settings.Control;
+import com.stecker.mqttdevicecontrols.settings.Rangetemplate;
 import com.stecker.mqttdevicecontrols.settings.Server;
 import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
+import com.stecker.mqttdevicecontrols.settings.Toggletemplate;
 
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
@@ -35,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(0).MQTTtopic = "home/carsten/deckenlampe/coolness";
         s.controls.get(0).title = "Wärme";
         s.controls.get(0).subtitle = "Deckenlampe";
-        s.controls.get(0).template.templateType = "rangetemplate";
+        s.controls.get(0).template = new Rangetemplate();
 
         s.controls.add(new Control());
         s.controls.get(1).structure = "Carsten";
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(1).MQTTtopic = "home/carsten/deckenlampe/brightness";
         s.controls.get(1).title = "Helligkeit";
         s.controls.get(1).subtitle = "Deckenlampe";
-        s.controls.get(1).template.templateType = "rangetemplate";
+        s.controls.get(1).template = new Rangetemplate();
 
         s.controls.add(new Control());
         s.controls.get(2).structure = "Carsten";
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(2).deviceType = DeviceTypes.TYPE_OUTLET;
         s.controls.get(2).MQTTtopic = "home/carsten/steckdose1/state";
         s.controls.get(2).title = "\uD83D\uDE3B";
-        s.controls.get(2).template.templateType = "toggletemplate";
+        s.controls.get(2).template = new Toggletemplate();
         s.controls.get(2).template.actionDescription = "BUTTON";
 
         s.controls.add(new Control());
@@ -61,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(3).deviceType = DeviceTypes.TYPE_LIGHT;
         s.controls.get(3).MQTTtopic = "home/clemens/deckenlampe/state";
         s.controls.get(3).title = "\uD83D\uDE3B";
-        s.controls.get(3).template.templateType = "toggletemplate";
+        s.controls.get(3).template = new Toggletemplate();
         s.controls.get(3).template.actionDescription = "BUTTON";
+        s.controls.get(3).template.onValue = "on";
+        s.controls.get(3).template.offValue = "off";
 
         s.controls.add(new Control());
         s.controls.get(4).structure = "Living Room";
@@ -70,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(4).deviceType = DeviceTypes.TYPE_LIGHT;
         s.controls.get(4).MQTTtopic = "home/living_room/ceilinglamp/state";
         s.controls.get(4).title = "Deckenlampe";
-        s.controls.get(4).template.templateType = "toggletemplate";
+        s.controls.get(4).template = new Toggletemplate();
         s.controls.get(4).template.actionDescription = "BUTTON";
 
         s.controls.add(new Control());
@@ -79,8 +84,10 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(5).deviceType = DeviceTypes.TYPE_LIGHT;
         s.controls.get(5).MQTTtopic = "home/dining_room/ceilinglamp/state";
         s.controls.get(5).title = "Deckenlampe";
-        s.controls.get(5).template.templateType = "toggletemplate";
+        s.controls.get(5).template = new Toggletemplate();
         s.controls.get(5).template.actionDescription = "BUTTON";
+        s.controls.get(5).template.onValue = "switch mode!";
+        s.controls.get(5).template.offValue = "";
 
         servers.add(s);
         Gson gson = new Gson();
