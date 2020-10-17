@@ -3,4 +3,5 @@
     <string name="config_file">testConfig.json</string>
     <string name="SaveButtonText">apply</string>
     <string name="ResetButtonText">reset</string>
+    <string name="ClearButtonText">clear</string>
 </resources>

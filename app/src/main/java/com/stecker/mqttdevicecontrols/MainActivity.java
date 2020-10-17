@@ -27,6 +27,24 @@ public class MainActivity extends AppCompatActivity {
     public String configFile;
     public Gson gson = new Gson();
 
+    public String getBaseConfig() {
+        LinkedList<Server> servers = new LinkedList<>();
+        Server s = new Server();
+        s.url = "test.mosquitto.org";
+
+        s.controls.add(new Control());
+        s.controls.get(0).structure = "Carsten";
+        s.controls.get(0).controlID = "0";
+        s.controls.get(0).deviceType = DeviceTypes.TYPE_LIGHT;
+        s.controls.get(0).MQTTtopic = "home/carsten/light/state";
+        s.controls.get(0).title = "Light";
+        s.controls.get(0).subtitle = "State";
+        s.controls.get(0).template = new Toggletemplate();
+
+        servers.add(s);
+        return gson.toJson(servers);
+    }
+
     public String getTestConfig() {
         LinkedList<Server> servers = new LinkedList<>();
         Server s = new Server();
@@ -36,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(0).structure = "Carsten";
         s.controls.get(0).controlID = "0";
         s.controls.get(0).deviceType = DeviceTypes.TYPE_THERMOSTAT;
-        s.controls.get(0).MQTTtopic = "home/carsten/deckenlampe/coolness";
-        s.controls.get(0).title = "Wärme";
-        s.controls.get(0).subtitle = "Deckenlampe";
+        s.controls.get(0).MQTTtopic = "home/carsten/deckenlampe/warmth";
+        s.controls.get(0).title = "Deckenlampe";
+        s.controls.get(0).subtitle = "Wärme";
         s.controls.get(0).template = new Rangetemplate();
 
         s.controls.add(new Control());
@@ -46,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(1).controlID = "1";
         s.controls.get(1).deviceType = DeviceTypes.TYPE_LIGHT;
         s.controls.get(1).MQTTtopic = "home/carsten/deckenlampe/brightness";
-        s.controls.get(1).title = "Helligkeit";
-        s.controls.get(1).subtitle = "Deckenlampe";
+        s.controls.get(1).title = "Deckenlampe";
+        s.controls.get(1).subtitle = "Helligkeit";
         s.controls.get(1).template = new Rangetemplate();
 
         s.controls.add(new Control());
@@ -100,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
         s.controls.get(6).template.command = "switch mode!";
 
         servers.add(s);
-        Gson gson = new Gson();
         return gson.toJson(servers);
     }
     public SettingsAPI initConfigFile() {
@@ -151,6 +168,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 s.saveSettings(getTestConfig());
+
+                EditText editor = findViewById(R.id.configfileeditor);
+                try {
+                    editor.setText(s.getSettingsText(true));
+                } catch (FileNotFoundException e) {
+                    editor.setText("Error while reading Settings");
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Button clearButton = findViewById(R.id.clearButton);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                s.saveSettings(getBaseConfig());
+
                 EditText editor = findViewById(R.id.configfileeditor);
                 try {
                     editor.setText(s.getSettingsText(true));
