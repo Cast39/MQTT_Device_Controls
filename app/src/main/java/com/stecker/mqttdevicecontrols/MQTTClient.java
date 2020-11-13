@@ -44,9 +44,10 @@ public class MQTTClient {
                     mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
                     try {
                         mqttAndroidClient.publish(topic, message.getBytes(), 0, true);
+                        Thread.sleep(1000);
                         mqttAndroidClient.disconnect();
                         Log.println(Log.ASSERT, topic, "sent!");
-                    } catch (MqttException e) {
+                    } catch (MqttException | InterruptedException e) {
                         e.printStackTrace();
                     }
                 }

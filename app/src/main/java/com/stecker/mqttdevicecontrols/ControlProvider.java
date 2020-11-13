@@ -43,8 +43,8 @@ public class ControlProvider extends ControlsProviderService {
         if (jca == null) {
             jca = new JSONControlAdaptor(settingsAPI);
         }
-    }
 
+    }
     /**
      * Publisher for all available controls
      * <p>
