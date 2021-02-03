@@ -22,7 +22,7 @@ public class MQTTClient {
     }
 
     public void sendMqttMessage(Context ctx, final String topic, final String message, final boolean retain) {
-        Log.println(Log.ASSERT, topic, "Sending Message");
+        //Log.println(Log.ASSERT, topic, "Sending Message to " + topic + ": " + message + " retained=" + retain);
         final MqttAndroidClient mqttAndroidClient = new MqttAndroidClient(ctx, serverUri, clientId);
 
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
