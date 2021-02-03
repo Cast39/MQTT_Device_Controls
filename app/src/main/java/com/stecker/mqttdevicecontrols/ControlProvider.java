@@ -13,7 +13,6 @@ import com.stecker.mqttdevicecontrols.settings.Server;
 import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
 
 import org.reactivestreams.FlowAdapters;
-import org.reactivestreams.Subscriber;
 
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
@@ -25,7 +24,7 @@ import io.reactivex.Flowable;
 import io.reactivex.processors.ReplayProcessor;
 
 public class ControlProvider extends ControlsProviderService {
-    private ReplayProcessor updatePublisher;
+    private ReplayProcessor<Control> updatePublisher;
     SettingsAPI settingsAPI = null;
     LinkedList<Server> servers;
     JSONControlAdaptor jca = null;
@@ -54,7 +53,6 @@ public class ControlProvider extends ControlsProviderService {
         return FlowAdapters.toFlowPublisher(Flowable.fromIterable(jca.getStatelessDeviceControls(getBaseContext())));
     }
 
-
     @NonNull
     @Override
     public Flow.Publisher<Control> createPublisherFor(@NonNull List<String> controlIds) {
@@ -68,10 +66,14 @@ public class ControlProvider extends ControlsProviderService {
         }
 
         updatePublisher = ReplayProcessor.create();
+        State s;
         for (Server server : servers) {
             for (com.stecker.mqttdevicecontrols.settings.Control control : server.controls) {
                 if (controlIds.contains(control.controlID)) {
-                    updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK, new State()));
+                    s = new State();
+                    // TODO receive last retained message
+                    updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK, s));
+
                 }
             }
         }
