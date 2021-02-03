@@ -8,6 +8,7 @@ public class Control {
     public int deviceType = DeviceTypes.TYPE_LIGHT;
     public boolean enabled = true;
     public String MQTTtopic = "default/topic";
+    public boolean retain = false;
     public String title = "";
     public String subtitle = "";
     public String structure = "Default";

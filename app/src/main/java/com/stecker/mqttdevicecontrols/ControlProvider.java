@@ -45,14 +45,8 @@ public class ControlProvider extends ControlsProviderService {
         }
 
     }
-    /**
-     * Publisher for all available controls
-     * <p>
-     * Retrieve all available controls. Use the stateless builder {@link Control.StatelessBuilder}
-     * to build each Control. Call {@link Subscriber#onComplete} when done loading all unique
-     * controls, or {@link Subscriber#onError} for error scenarios. Duplicate Controls will
-     * replace the original.
-     */
+
+
     @NonNull
     @Override
     public Flow.Publisher<Control> createPublisherForAllAvailable() {
@@ -60,15 +54,7 @@ public class ControlProvider extends ControlsProviderService {
         return FlowAdapters.toFlowPublisher(Flowable.fromIterable(jca.getStatelessDeviceControls(getBaseContext())));
     }
 
-    /**
-     * Return a valid Publisher for the given controlIds. This publisher will be asked to provide
-     * updates for the given list of controlIds as long as the {@link Subscription} is valid.
-     * Calls to {@link Subscriber#onComplete} will not be expected. Instead, wait for the call from
-     * {@link Subscription#cancel} to indicate that updates are no longer required. It is expected
-     * that controls provided by this publisher were created using {@link Control.StatefulBuilder}.
-     *
-     * @param controlIds
-     */
+
     @NonNull
     @Override
     public Flow.Publisher<Control> createPublisherFor(@NonNull List<String> controlIds) {
@@ -93,18 +79,7 @@ public class ControlProvider extends ControlsProviderService {
         return FlowAdapters.toFlowPublisher(updatePublisher);
     }
 
-    /**
-     * The user has interacted with a Control. The action is dictated by the type of
-     * {@link ControlAction} that was sent. A response can be sent via
-     * {@link Consumer#accept}, with the Integer argument being one of the provided
-     * {@link ControlAction.ResponseResult}. The Integer should indicate whether the action
-     * was received successfully, or if additional prompts should be presented to
-     * the user. Any visual control updates should be sent via the Publisher.
-     *
-     * @param controlId
-     * @param action
-     * @param consumer
-     */
+
     @Override
     public void performControlAction(@NonNull String controlId, @NonNull ControlAction controlAction, @NonNull Consumer<Integer> consumer) {
         initControlProvider();
@@ -131,7 +106,7 @@ public class ControlProvider extends ControlsProviderService {
                             Log.println(Log.ASSERT, "Link", uri);
 
                             // MQTT stuff
-                            String message = "";
+                            String message;
                             if (action.getNewState()) {
                                 message = control.template.onCommand;
                             } else {
@@ -140,7 +115,7 @@ public class ControlProvider extends ControlsProviderService {
 
                             if (!message.equals("")) {
                                 mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
-                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message);
+                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message, control.retain);
                             }
 
                             updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewState())));
@@ -154,7 +129,7 @@ public class ControlProvider extends ControlsProviderService {
 
                             // MQTT stuff
                             mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
-                            mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(action.getNewValue()));
+                            mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(action.getNewValue()), control.retain);
 
                             updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewValue())));
 
@@ -176,7 +151,7 @@ public class ControlProvider extends ControlsProviderService {
 
                             if (!message.equals("")) {
                                 mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
-                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message);
+                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message, control.retain);
                             }
 
                             updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State()));

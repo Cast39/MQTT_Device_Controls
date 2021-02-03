@@ -11,6 +11,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+
 public class MQTTClient {
     private String serverUri;
     private String clientId;
@@ -20,7 +21,7 @@ public class MQTTClient {
         this.clientId = clientId;
     }
 
-    public void sendMqttMessage(Context ctx, final String topic, final String message) {
+    public void sendMqttMessage(Context ctx, final String topic, final String message, final boolean retain) {
         Log.println(Log.ASSERT, topic, "Sending Message");
         final MqttAndroidClient mqttAndroidClient = new MqttAndroidClient(ctx, serverUri, clientId);
 
@@ -43,7 +44,7 @@ public class MQTTClient {
                     disconnectedBufferOptions.setDeleteOldestMessages(false);
                     mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
                     try {
-                        mqttAndroidClient.publish(topic, message.getBytes(), 0, true);
+                        mqttAndroidClient.publish(topic, message.getBytes(), 0, retain);
                         Thread.sleep(1000);
                         mqttAndroidClient.disconnect();
                         Log.println(Log.ASSERT, topic, "sent!");
