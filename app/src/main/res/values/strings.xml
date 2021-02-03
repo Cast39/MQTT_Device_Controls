@@ -5,4 +5,5 @@
     <string name="ResetButtonText">testconfig</string>
     <string name="ClearButtonText">minimal config</string>
     <string name="ReadButtonText">read current config</string>
+    <string name="config_file_editor_headline">Config File Editor</string>
 </resources>
