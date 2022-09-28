@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "com.stecker.mqttdevicecontrols"
         minSdkVersion 30
-        targetSdkVersion 33
+        targetSdkVersion 30
         versionCode 13
         versionName "1.2.0"
 
