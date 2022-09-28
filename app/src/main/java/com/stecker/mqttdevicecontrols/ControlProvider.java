@@ -15,6 +15,7 @@ import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
 import org.reactivestreams.FlowAdapters;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Flow;
@@ -58,24 +59,48 @@ public class ControlProvider extends ControlsProviderService {
     public Flow.Publisher<Control> createPublisherFor(@NonNull List<String> controlIds) {
         initControlProvider();
 
+        // read config
         try {
             servers = settingsAPI.getSettingsObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return null;
+            return FlowAdapters.toFlowPublisher(updatePublisher);
         }
+
+        // open mqtt
+        MQTTClient mqttClient;
+
 
         updatePublisher = ReplayProcessor.create();
         State s;
         for (Server server : servers) {
+            // generate all visible Controls with default states
             for (com.stecker.mqttdevicecontrols.settings.Control control : server.controls) {
                 if (controlIds.contains(control.controlID)) {
                     s = new State();
-                    // TODO receive last retained message
+                    //Log.println(Log.ASSERT, "Link", "creating specific publisher for" + control.controlID);
+
                     updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK, s));
 
                 }
             }
+
+
+
+            String uri = server.protocol + "://" + server.url + ":" + server.port;
+            mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
+            ArrayList<com.stecker.mqttdevicecontrols.settings.Control> controlSettings = new ArrayList<>();
+
+            // extract mqtt topics
+            for (com.stecker.mqttdevicecontrols.settings.Control control : server.controls) {
+                if (controlIds.contains(control.controlID) && control.retain) {
+                    controlSettings.add(control);
+                }
+            }
+
+            // receive retained messages asynchronously
+            Log.println(Log.ASSERT, "Link", "receiving retained states");
+            mqttClient.receiveRetainedMessages(getBaseContext(), jca, updatePublisher, controlSettings);
         }
 
         return FlowAdapters.toFlowPublisher(updatePublisher);

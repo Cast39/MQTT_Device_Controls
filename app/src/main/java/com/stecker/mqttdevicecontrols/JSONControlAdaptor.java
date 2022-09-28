@@ -58,35 +58,43 @@ public class JSONControlAdaptor {
         // Extract Controltemplate
         ControlTemplate ct = null;
 
-        if (control.template.templateType.equals("toggletemplate")) {
-            ct = new ToggleTemplate(
-                    control.controlID + control.template.templateType,
-                    new ControlButton(state.booleanState, control.template.actionDescription));
+        switch (control.template.templateType) {
+            case "toggletemplate":
+                //Log.println(Log.ASSERT, "jca", "toggletemplate state: " + state.booleanState);
+                ct = new ToggleTemplate(
+                        control.controlID + control.template.templateType,
+                        new ControlButton(state.booleanState, control.template.actionDescription));
 
-        } else if(control.template.templateType.equals("rangetemplate")) {
-            ct = new RangeTemplate(
-                    control.controlID + control.template.templateType,
-                    control.template.minValue,
-                    control.template.maxValue,
-                    state.floatState,
-                    control.template.stepValue,
-                    control.template.formatString);
+                break;
+            case "rangetemplate":
+                //Log.println(Log.ASSERT, "jca", "rangetemplate state: " + state.floatState);
+                ct = new RangeTemplate(
+                        control.controlID + control.template.templateType,
+                        control.template.minValue,
+                        control.template.maxValue,
+                        state.floatState,
+                        control.template.stepValue,
+                        control.template.formatString);
 
 
-        } else if(control.template.templateType.equals("togglerangetemplate")) {
-            //TODO
-            Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
+                break;
+            case "togglerangetemplate":
+                //TODO
+                Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
 
-        } else if(control.template.templateType.equals("temperaturecontroltemplate")) {
-            //TODO
-            Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
+                break;
+            case "temperaturecontroltemplate":
+                //TODO
+                Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
 
-        } else if (control.template.templateType.equals("statelesstemplate")) {
-            ct = new StatelessTemplate(control.controlID + control.template.templateType);
+                break;
+            case "statelesstemplate":
+                ct = new StatelessTemplate(control.controlID + control.template.templateType);
 
-        } else {
-            Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
-            return null;
+                break;
+            default:
+                Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
+                return null;
         }
         PendingIntent pi = PendingIntent.getActivity(ctx, 1, new Intent(), control.PIFlags);
         Control.StatefulBuilder sb = new Control.StatefulBuilder(control.controlID, pi);
