@@ -38,7 +38,7 @@ public class JSONControlAdaptor {
             if (server.enabled) {
                 for (com.stecker.mqttdevicecontrols.settings.Control control: server.controls) {
                     if (control.enabled) {
-                        PendingIntent pi = PendingIntent.getActivity(ctx, 1, new Intent(), control.PIFlags);
+                        PendingIntent pi = PendingIntent.getActivity(ctx, 1, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
                         Control.StatelessBuilder sb = new Control.StatelessBuilder(control.controlID, pi);
 
                         sb.setTitle(control.title);
@@ -107,7 +107,7 @@ public class JSONControlAdaptor {
                 Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
                 return null;
         }
-        PendingIntent pi = PendingIntent.getActivity(ctx, 1, new Intent(), control.PIFlags);
+        PendingIntent pi = PendingIntent.getActivity(ctx, 1, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
         Control.StatefulBuilder sb = new Control.StatefulBuilder(control.controlID, pi);
 
         sb.setTitle(control.title);
