@@ -81,6 +81,7 @@ public class MQTTClient {
     public void receiveRetainedMessages(Context ctx, JSONControlAdaptor jca, ReplayProcessor<Control> updatePublisher, ArrayList<com.stecker.mqttdevicecontrols.settings.Control> controlSettings) {
         final MqttAndroidClient mqttAndroidClient = new MqttAndroidClient(ctx, serverUri, clientId);
 
+
         try {
             mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
                 @Override
@@ -104,6 +105,10 @@ public class MQTTClient {
                     try {
                         for (com.stecker.mqttdevicecontrols.settings.Control controlSetting:controlSettings) {
                             mqttAndroidClient.subscribe(controlSetting.MQTTtopic, 0);
+
+                            if (!(controlSetting.MQTTtopic2 == null || "".equals(controlSetting.MQTTtopic2))) {
+                                mqttAndroidClient.subscribe(controlSetting.MQTTtopic2, 0);
+                            }
                         }
 
                     } catch (MqttException e) {
@@ -123,10 +128,11 @@ public class MQTTClient {
                     Log.println(Log.ASSERT,"Mqtt","Incoming message from [" + topic + "]: " + payload);
 
                     for (com.stecker.mqttdevicecontrols.settings.Control controlSetting:controlSettings) {
-                        if (controlSetting.MQTTtopic.equals(topic) || controlSetting.MQTTtopic2.equals(topic)) {
 
+                        if (controlSetting.MQTTtopic.equals(topic) || topic.equals(controlSetting.MQTTtopic2)) {
+                            // Log.println(Log.ASSERT, "Mqtt", "processing...");
                             if (controlSetting.state.autodecode(payload)) {
-                                //Log.println(Log.ASSERT,"Mqtt","Decoded successful!");
+                                // Log.println(Log.ASSERT,"Mqtt","Decoded successful!");
 
                                 int state = Control.STATUS_OK;
                                 updatePublisher.onNext(jca.getStatefulDeviceControl(ctx, controlSetting, state));
@@ -140,6 +146,7 @@ public class MQTTClient {
                         }
 
                     }
+
                 }
 
                 @Override
