@@ -127,7 +127,7 @@ public class ControlProvider extends ControlsProviderService {
 
                             // MQTT stuff
                             String message;
-                            if (!control.template.onCommand.equals("") && !control.template.offCommand.equals("")) {
+                            if (!(control.template.onCommand == null || "".equals(control.template.onCommand) || control.template.offCommand == null || "".equals(control.template.offCommand))) {
                                 if (control.state.booleanState) {
                                     message = control.template.onCommand;
                                 } else {
@@ -137,7 +137,8 @@ public class ControlProvider extends ControlsProviderService {
                                 message = "" + control.state.booleanState;
                             }
 
-                            if (!message.equals("")) {
+                            Log.println(Log.ASSERT, "Mqttsend", "message: " + message);
+                            if (!"".equals(message)) {
                                 mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
                                 mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message, control.retain);
                             }
@@ -175,7 +176,7 @@ public class ControlProvider extends ControlsProviderService {
                                 control.state.booleanState = action.getNewState();
 
                                 String message;
-                                if (!control.template.onCommand.equals("") && !control.template.offCommand.equals("")) {
+                                if (!(control.template.onCommand == null || "".equals(control.template.onCommand) || control.template.offCommand == null || "".equals(control.template.offCommand))) {
                                     if (control.state.booleanState) {
                                         message = control.template.onCommand;
                                     } else {
@@ -207,7 +208,7 @@ public class ControlProvider extends ControlsProviderService {
                         case "statelesstemplate":
                             String message = control.template.command;
 
-                            if (!message.equals("")) {
+                            if (!"".equals(message)) {
                                 mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
                                 mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message, control.retain);
                             }

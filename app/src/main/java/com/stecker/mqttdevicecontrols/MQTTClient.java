@@ -47,7 +47,8 @@ public class MQTTClient {
         //Log.println(Log.ASSERT, topic, "Sending Message to " + topic + ": " + message + " retained=" + retain);
         final MqttAndroidClient mqttAndroidClient = new MqttAndroidClient(ctx, serverUri, clientId);
 
-
+        // abort if message is null
+        if(message == null || "".equals(message)) return;
 
         try {
             MqttMessage m = new MqttMessage();
@@ -74,7 +75,7 @@ public class MQTTClient {
                 }
             });
         } catch (MqttException e) {
-            e.printStackTrace();
+            Log.e("Mqttsend", e.toString());
         }
     }
 
