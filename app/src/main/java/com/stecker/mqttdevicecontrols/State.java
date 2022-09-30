@@ -28,11 +28,11 @@ public class State {
     // detects datatype, returns false if decoding isn't possible
     public boolean autodecode(String unknownType) {
         this.autodecode = unknownType;
-        if (unknownType.equalsIgnoreCase("true")) {
+        if (unknownType.equalsIgnoreCase("true") | unknownType.equalsIgnoreCase("on")) {
             //Log.println(Log.ASSERT, "decoder", "its a bool");
             this.booleanState = true;
 
-        } else if (unknownType.equalsIgnoreCase("false")) {
+        } else if (unknownType.equalsIgnoreCase("false") | unknownType.equalsIgnoreCase("off")) {
             //Log.println(Log.ASSERT, "decoder", "its a bool");
             this.booleanState = false;
 
