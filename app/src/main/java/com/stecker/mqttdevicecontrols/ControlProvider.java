@@ -92,7 +92,7 @@ public class ControlProvider extends ControlsProviderService {
 
             // extract mqtt topics
             for (com.stecker.mqttdevicecontrols.settings.Control control : server.controls) {
-                if (controlIds.contains(control.controlID) && control.retain) {
+                if (controlIds.contains(control.controlID)) {
                     controlSettings.add(control);
                 }
             }
