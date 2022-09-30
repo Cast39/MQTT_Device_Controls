@@ -20,8 +20,8 @@ import io.reactivex.processors.ReplayProcessor;
 
 
 public class MQTTClient {
-    private String serverUri;
-    private String clientId;
+    final private String serverUri;
+    final private String clientId;
     private MqttConnectOptions mqttConnectOptions;
     private DisconnectedBufferOptions disconnectedBufferOptions;
 
@@ -124,13 +124,12 @@ public class MQTTClient {
 
                     for (com.stecker.mqttdevicecontrols.settings.Control controlSetting:controlSettings) {
                         if (controlSetting.MQTTtopic.equalsIgnoreCase(topic)) {
-                            State s = new State();
 
-                            if (s.autodecode(payload)) {
+                            if (controlSetting.state.autodecode(payload)) {
                                 //Log.println(Log.ASSERT,"Mqtt","Decoded successful!");
 
                                 int state = Control.STATUS_OK;
-                                updatePublisher.onNext(jca.getStatefulDeviceControl(ctx, controlSetting, state, s));
+                                updatePublisher.onNext(jca.getStatefulDeviceControl(ctx, controlSetting, state));
 
                                 //Log.println(Log.ASSERT,"Mqtt","Updated ControlTemplate to " + s.autodecode);
                             } else {

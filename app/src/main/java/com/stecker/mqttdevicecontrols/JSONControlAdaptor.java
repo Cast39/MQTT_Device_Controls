@@ -8,6 +8,7 @@ import android.service.controls.templates.ControlButton;
 import android.service.controls.templates.ControlTemplate;
 import android.service.controls.templates.RangeTemplate;
 import android.service.controls.templates.StatelessTemplate;
+import android.service.controls.templates.ToggleRangeTemplate;
 import android.service.controls.templates.ToggleTemplate;
 import android.util.Log;
 
@@ -54,7 +55,8 @@ public class JSONControlAdaptor {
         return deviceControls;
     }
 
-    public Control getStatefulDeviceControl(Context ctx, com.stecker.mqttdevicecontrols.settings.Control control, int status, State state) {
+    public Control getStatefulDeviceControl(Context ctx, com.stecker.mqttdevicecontrols.settings.Control control, int status) {
+        State state = control.state;
         // Extract Controltemplate
         ControlTemplate ct = null;
 

@@ -72,15 +72,14 @@ public class ControlProvider extends ControlsProviderService {
 
 
         updatePublisher = ReplayProcessor.create();
-        State s;
+
         for (Server server : servers) {
             // generate all visible Controls with default states
             for (com.stecker.mqttdevicecontrols.settings.Control control : server.controls) {
                 if (controlIds.contains(control.controlID)) {
-                    s = new State();
                     //Log.println(Log.ASSERT, "Link", "creating specific publisher for" + control.controlID);
-
-                    updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK, s));
+                    control.state = new State(); // init all states on display for creation
+                    updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, Control.STATUS_OK));
 
                 }
             }
@@ -123,7 +122,7 @@ public class ControlProvider extends ControlsProviderService {
                     switch (control.template.templateType) {
                         case "toggletemplate": {
                             BooleanAction action = (BooleanAction) controlAction;
-                            int state = Control.STATUS_OK;
+                            state = Control.STATUS_OK;
 
                             Log.println(Log.ASSERT, "Link", uri);
 
@@ -140,31 +139,35 @@ public class ControlProvider extends ControlsProviderService {
                                 mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message, control.retain);
                             }
 
-                            updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewState())));
+                            control.state.booleanState = action.getNewState();
+                            updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state));
 
                             break;
                         }
                         case "rangetemplate": {
                             FloatAction action = (FloatAction) controlAction;
 
-                            int state = Control.STATUS_OK;
+                            state = Control.STATUS_OK;
 
                             // MQTT stuff
                             mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
                             mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(action.getNewValue()), control.retain);
 
-                            updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State(action.getNewValue())));
+                            control.state.floatState = action.getNewValue();
+                            updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state));
 
                             break;
                         }
                         case "togglerangetemplate":
                             //TODO
                             break;
+
                         case "temperaturecontroltemplate":
                             //TODO
                             break;
+
                         case "statelesstemplate":
-                            int state = Control.STATUS_OK;
+                            state = Control.STATUS_OK;
 
                             Log.println(Log.ASSERT, "Link", uri);
 
@@ -176,7 +179,7 @@ public class ControlProvider extends ControlsProviderService {
                                 mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message, control.retain);
                             }
 
-                            updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state, new State()));
+                            updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state));
                             break;
                         default:
                             continue;
