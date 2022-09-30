@@ -20,6 +20,11 @@ public class State {
         this.floatState = floatState;
     }
 
+    public State(float floatState, boolean booleanState) {
+        this.floatState = floatState;
+        this.booleanState = booleanState;
+    }
+
 
     public State() {
 

@@ -81,8 +81,17 @@ public class JSONControlAdaptor {
 
                 break;
             case "togglerangetemplate":
-                //TODO
-                Log.println(Log.ASSERT, "TODO", control.template.templateType + " is not supported!");
+                ControlButton cb = new ControlButton(state.booleanState, control.template.actionDescription);
+                RangeTemplate rt = new RangeTemplate(
+                        control.controlID + control.template.templateType,
+                        control.template.minValue,
+                        control.template.maxValue,
+                        state.floatState,
+                        control.template.stepValue,
+                        control.template.formatString);
+
+                ct = new ToggleRangeTemplate(control.controlID + control.template.templateType, cb, rt);
+
 
                 break;
             case "temperaturecontroltemplate":

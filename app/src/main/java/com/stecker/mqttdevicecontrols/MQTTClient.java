@@ -123,7 +123,7 @@ public class MQTTClient {
                     Log.println(Log.ASSERT,"Mqtt","Incoming message from [" + topic + "]: " + payload);
 
                     for (com.stecker.mqttdevicecontrols.settings.Control controlSetting:controlSettings) {
-                        if (controlSetting.MQTTtopic.equalsIgnoreCase(topic)) {
+                        if (controlSetting.MQTTtopic.equals(topic) || controlSetting.MQTTtopic2.equals(topic)) {
 
                             if (controlSetting.state.autodecode(payload)) {
                                 //Log.println(Log.ASSERT,"Mqtt","Decoded successful!");

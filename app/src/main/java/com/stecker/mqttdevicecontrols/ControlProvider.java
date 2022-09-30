@@ -122,16 +122,19 @@ public class ControlProvider extends ControlsProviderService {
                     switch (control.template.templateType) {
                         case "toggletemplate": {
                             BooleanAction action = (BooleanAction) controlAction;
-                            state = Control.STATUS_OK;
+                            control.state.booleanState = action.getNewState();
 
-                            Log.println(Log.ASSERT, "Link", uri);
 
                             // MQTT stuff
                             String message;
-                            if (action.getNewState()) {
-                                message = control.template.onCommand;
+                            if (!control.template.onCommand.equals("") && !control.template.offCommand.equals("")) {
+                                if (control.state.booleanState) {
+                                    message = control.template.onCommand;
+                                } else {
+                                    message = control.template.offCommand;
+                                }
                             } else {
-                                message = control.template.offCommand;
+                                message = "" + control.state.booleanState;
                             }
 
                             if (!message.equals("")) {
@@ -139,27 +142,62 @@ public class ControlProvider extends ControlsProviderService {
                                 mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message, control.retain);
                             }
 
-                            control.state.booleanState = action.getNewState();
+                            state = Control.STATUS_OK;
                             updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state));
 
                             break;
                         }
                         case "rangetemplate": {
                             FloatAction action = (FloatAction) controlAction;
+                            control.state.floatState = action.getNewValue();
 
-                            state = Control.STATUS_OK;
 
                             // MQTT stuff
                             mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
-                            mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(action.getNewValue()), control.retain);
+                            mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(control.state.floatState), control.retain);
 
-                            control.state.floatState = action.getNewValue();
+                            state = Control.STATUS_OK;
                             updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state));
 
                             break;
                         }
                         case "togglerangetemplate":
-                            //TODO
+                            mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
+
+                            if (controlAction instanceof FloatAction) {
+                                FloatAction action = (FloatAction) controlAction;
+                                control.state.floatState = action.getNewValue();
+
+                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(action.getNewValue()), control.retain);
+
+                            } else if (controlAction instanceof BooleanAction) {
+                                BooleanAction action = (BooleanAction) controlAction;
+                                control.state.booleanState = action.getNewState();
+
+                                String message;
+                                if (!control.template.onCommand.equals("") && !control.template.offCommand.equals("")) {
+                                    if (control.state.booleanState) {
+                                        message = control.template.onCommand;
+                                    } else {
+                                        message = control.template.offCommand;
+                                    }
+                                } else {
+                                    message = "" + control.state.booleanState;
+                                }
+
+                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic2, message, control.retain);
+                            }
+
+                            Log.println(Log.ASSERT, "ToggleRange", "state: " + control.state.floatState + " (" + control.state.booleanState + ")");
+
+                            state = Control.STATUS_OK;
+                            updatePublisher.onNext(
+                                    jca.getStatefulDeviceControl(
+                                            getBaseContext(),
+                                            control,
+                                            state
+                                    )
+                            );
                             break;
 
                         case "temperaturecontroltemplate":
@@ -167,11 +205,6 @@ public class ControlProvider extends ControlsProviderService {
                             break;
 
                         case "statelesstemplate":
-                            state = Control.STATUS_OK;
-
-                            Log.println(Log.ASSERT, "Link", uri);
-
-                            // MQTT stuff
                             String message = control.template.command;
 
                             if (!message.equals("")) {
@@ -179,6 +212,7 @@ public class ControlProvider extends ControlsProviderService {
                                 mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message, control.retain);
                             }
 
+                            state = Control.STATUS_OK;
                             updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state));
                             break;
                         default:

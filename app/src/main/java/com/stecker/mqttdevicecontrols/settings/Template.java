@@ -8,13 +8,13 @@ public class Template {
     public Integer currentActiveMode = null;
     public Integer modesFlag = null;
 
-    // RangeTemplate
+    // RangeTemplate & ToggleRangeTemplate
     public Float minValue = null;
     public Float maxValue = null;
     public Float stepValue = null;
     public String formatString = null;
 
-    // ToggleTemplate
+    // ToggleTemplate & ToggleRangeTemplate
     public String actionDescription = null;
     public String onCommand = null;
     public String offCommand = null;
