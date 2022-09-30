@@ -109,15 +109,10 @@ public class ControlProvider extends ControlsProviderService {
 
     @Override
     public void performControlAction(@NonNull String controlId, @NonNull ControlAction controlAction, @NonNull Consumer<Integer> consumer) {
+        int state;
         initControlProvider();
-        LinkedList<Server> servers;
         MQTTClient mqttClient;
-        try {
-            servers = settingsAPI.getSettingsObject();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
+
         for (Server server : servers) {
             for (final com.stecker.mqttdevicecontrols.settings.Control control : server.controls) {
                 if (controlId.equals(control.controlID)) {
