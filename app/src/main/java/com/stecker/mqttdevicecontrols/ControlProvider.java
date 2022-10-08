@@ -87,7 +87,7 @@ public class ControlProvider extends ControlsProviderService {
 
 
             String uri = server.protocol + "://" + server.url + ":" + server.port;
-            mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
+            mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis(), server.username, server.password);
             ArrayList<com.stecker.mqttdevicecontrols.settings.Control> controlSettings = new ArrayList<>();
 
             // extract mqtt topics
@@ -139,7 +139,7 @@ public class ControlProvider extends ControlsProviderService {
 
 
                             if (!"".equals(message)) {
-                                mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
+                                mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis(), server.username, server.password);
                                 mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopics.get(0).getSend(), message, control.retain);
                             }
 
@@ -154,7 +154,7 @@ public class ControlProvider extends ControlsProviderService {
 
 
                             // MQTT stuff
-                            mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
+                            mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis(), server.username, server.password);
                             mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopics.get(0).getSend(), Float.toString(control.state.floatState), control.retain);
 
                             state = Control.STATUS_OK;
@@ -163,7 +163,7 @@ public class ControlProvider extends ControlsProviderService {
                             break;
                         }
                         case "togglerangetemplate":
-                            mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
+                            mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis(), server.username, server.password);
 
                             if (controlAction instanceof FloatAction) {
                                 FloatAction action = (FloatAction) controlAction;
@@ -189,7 +189,7 @@ public class ControlProvider extends ControlsProviderService {
                                 mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopics.get(1).getSend(), message, control.retain);
                             }
 
-                            Log.println(Log.ASSERT, "ToggleRange", "state: " + control.state.floatState + " (" + control.state.booleanState + ")");
+                            // Log.println(Log.ASSERT, "ToggleRange", "state: " + control.state.floatState + " (" + control.state.booleanState + ")");
 
                             state = Control.STATUS_OK;
                             updatePublisher.onNext(
@@ -209,7 +209,7 @@ public class ControlProvider extends ControlsProviderService {
                             String message = control.template.command;
 
                             if (!"".equals(message)) {
-                                mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
+                                mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis(), server.username, server.password);
                                 mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopics.get(0).getSend(), message, control.retain);
                             }
 

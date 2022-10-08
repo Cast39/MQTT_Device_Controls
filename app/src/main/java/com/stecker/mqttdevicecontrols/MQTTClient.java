@@ -42,6 +42,15 @@ public class MQTTClient {
 
     }
 
+    public MQTTClient(String serverUri, String clientId, String username, String password) {
+        this(serverUri, clientId);
+
+        if (!(username.equals("") || password.equals(""))) {
+            mqttConnectOptions.setUserName(username);
+            mqttConnectOptions.setPassword(password.toCharArray());
+        }
+    }
+
     // sends messages asynchronous
     public void sendMqttMessage(Context ctx, final String topic, final String message, final boolean retain) {
         //Log.println(Log.ASSERT, topic, "Sending Message to " + topic + ": " + message + " retained=" + retain);
@@ -132,18 +141,16 @@ public class MQTTClient {
                     for (com.stecker.mqttdevicecontrols.settings.Control controlSetting:controlSettings) {
                         try {
                             topicIndex = -1;
-                            Log.println(Log.ASSERT, "Mqtt", "checking " + controlSetting.title);
                             for (int i = 0; i<controlSetting.MQTTtopics.size(); i++) {
                                 if (controlSetting.MQTTtopics.get(i).getRecv().equals(topic)) {
                                     topicIndex = i;
-                                    Log.println(Log.ASSERT, "Mqtt", "Found" + i);
                                     break;
                                 }
                             }
 
 
                             if (topicIndex != -1) {
-                            Log.println(Log.ASSERT, "Mqtt", "processing...");
+                                Log.println(Log.ASSERT, "Mqtt", "processing...");
 
                                 if (controlSetting.state.autodecode(payload)) {
                                     Log.println(Log.ASSERT, "Mqtt", "Decoded successful!");
