@@ -137,10 +137,10 @@ public class ControlProvider extends ControlsProviderService {
                                 message = "" + control.state.booleanState;
                             }
 
-                            Log.println(Log.ASSERT, "Mqttsend", "message: " + message);
+
                             if (!"".equals(message)) {
                                 mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
-                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message, control.retain);
+                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopics.get(0).getSend(), message, control.retain);
                             }
 
                             state = Control.STATUS_OK;
@@ -155,7 +155,7 @@ public class ControlProvider extends ControlsProviderService {
 
                             // MQTT stuff
                             mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
-                            mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(control.state.floatState), control.retain);
+                            mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopics.get(0).getSend(), Float.toString(control.state.floatState), control.retain);
 
                             state = Control.STATUS_OK;
                             updatePublisher.onNext(jca.getStatefulDeviceControl(getBaseContext(), control, state));
@@ -169,7 +169,7 @@ public class ControlProvider extends ControlsProviderService {
                                 FloatAction action = (FloatAction) controlAction;
                                 control.state.floatState = action.getNewValue();
 
-                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, Float.toString(action.getNewValue()), control.retain);
+                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopics.get(0).getSend(), Float.toString(action.getNewValue()), control.retain);
 
                             } else if (controlAction instanceof BooleanAction) {
                                 BooleanAction action = (BooleanAction) controlAction;
@@ -186,7 +186,7 @@ public class ControlProvider extends ControlsProviderService {
                                     message = "" + control.state.booleanState;
                                 }
 
-                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic2, message, control.retain);
+                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopics.get(1).getSend(), message, control.retain);
                             }
 
                             Log.println(Log.ASSERT, "ToggleRange", "state: " + control.state.floatState + " (" + control.state.booleanState + ")");
@@ -210,7 +210,7 @@ public class ControlProvider extends ControlsProviderService {
 
                             if (!"".equals(message)) {
                                 mqttClient = new MQTTClient(uri, mqttClientID + System.currentTimeMillis());
-                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopic, message, control.retain);
+                                mqttClient.sendMqttMessage(getBaseContext(), control.MQTTtopics.get(0).getSend(), message, control.retain);
                             }
 
                             state = Control.STATUS_OK;

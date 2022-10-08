@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.stecker.mqttdevicecontrols.settings.Control;
+import com.stecker.mqttdevicecontrols.settings.MQTTtopic;
 import com.stecker.mqttdevicecontrols.settings.Rangetemplate;
 import com.stecker.mqttdevicecontrols.settings.Server;
 import com.stecker.mqttdevicecontrols.settings.SettingsAPI;
@@ -31,13 +32,13 @@ public class MainActivity extends AppCompatActivity {
     public LinkedList<Server> getBaseConfig() {
         LinkedList<Server> servers = new LinkedList<>();
         Server s = new Server();
-        s.url = "public.mqtthq.com";
+        s.url = "test.mosquitto.org";
 
         Control c = new Control();
         c.structure = "Category1";
         c.controlID = "0";
         c.deviceType = DeviceTypes.TYPE_LIGHT;
-        c.MQTTtopic = "home/category1/light/state";
+        c.MQTTtopics.add(new MQTTtopic("home/category1/light/state"));
         c.title = "Light";
         c.subtitle = "State";
         c.template = new Toggletemplate();
@@ -50,14 +51,14 @@ public class MainActivity extends AppCompatActivity {
     public LinkedList<Server> getTestConfig() {
         LinkedList<Server> servers = new LinkedList<>();
         Server s = new Server();
-        s.url = "public.mqtthq.com";
+        s.url = "test.mosquitto.org";
 
         Control c = new Control();
         
         c.structure = "Room1";
         c.controlID = "0";
         c.deviceType = DeviceTypes.TYPE_THERMOSTAT;
-        c.MQTTtopic = "home/room1/ceilinglight/warmth";
+        c.MQTTtopics.add(new MQTTtopic("home/room1/ceilinglight/warmth"));
         c.title = "Ceiling Light";
         c.subtitle = "warmth";
         c.template = new Rangetemplate();
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         c.structure = "Room1";
         c.controlID = "1";
         c.deviceType = DeviceTypes.TYPE_LIGHT;
-        c.MQTTtopic = "home/room1/ceilinglight/brightness";
+        c.MQTTtopics.add(new MQTTtopic("home/room1/ceilinglight/brightness"));
         c.title = "Ceiling Light";
         c.subtitle = "brightness";
         c.template = new Rangetemplate();
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         c.structure = "Room1";
         c.controlID = "2";
         c.deviceType = DeviceTypes.TYPE_OUTLET;
-        c.MQTTtopic = "home/room1/outlet1/state";
+        c.MQTTtopics.add(new MQTTtopic("home/room1/outlet1/state"));
         c.title = "\uD83D\uDE3B";
         c.template = new Toggletemplate();
         c.template.actionDescription = "BUTTON";
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         c.structure = "Room2";
         c.controlID = "3";
         c.deviceType = DeviceTypes.TYPE_LIGHT;
-        c.MQTTtopic = "home/room2/ceilinglight/state";
+        c.MQTTtopics.add(new MQTTtopic("home/room2/ceilinglight/state"));
         c.title = "\uD83D\uDE3B";
         c.template = new Toggletemplate();
         c.template.actionDescription = "BUTTON";
@@ -99,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
         c.structure = "Room2";
         c.controlID = "4";
         c.deviceType = DeviceTypes.TYPE_FAN;
-        c.MQTTtopic = "home/room2/fan/speed";
-        c.MQTTtopic2 = "home/room2/fan/state";
+        c.MQTTtopics.add(new MQTTtopic("home/room2/fan/speed"));
+        c.MQTTtopics.add(new MQTTtopic("home/room2/fan/state"));
         c.title = "Fan";
         c.subtitle = "ToggleRange";
         c.template = new ToggleRangetemplate();
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         c.structure = "Living Room";
         c.controlID = "5";
         c.deviceType = DeviceTypes.TYPE_LIGHT;
-        c.MQTTtopic = "home/living_room/ceilinglight/state";
+        c.MQTTtopics.add(new MQTTtopic("home/living_room/ceilinglight/state"));
         c.title = "Ceiling Light";
         c.template = new Toggletemplate();
         c.template.actionDescription = "BUTTON";
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         c.structure = "Dining Room";
         c.controlID = "6";
         c.deviceType = DeviceTypes.TYPE_LIGHT;
-        c.MQTTtopic = "home/dining_room/ceilinglight/state";
+        c.MQTTtopics.add(new MQTTtopic("home/dining_room/ceilinglight/state"));
         c.title = "Ceiling Light";
         c.template = new Toggletemplate();
         c.template.actionDescription = "BUTTON";
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         c.structure = "Dining Room";
         c.controlID = "7";
         c.deviceType = DeviceTypes.TYPE_LIGHT;
-        c.MQTTtopic = "home/dining_room/TV/togglePower";
+        c.MQTTtopics.add(new MQTTtopic("home/dining_room/TV/togglePower"));
         c.title = "Stateless ceilinglight 2";
         c.template = new Statelesstemplate();
         c.template.command = "on";

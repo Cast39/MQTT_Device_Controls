@@ -105,10 +105,10 @@ public class MQTTClient {
 
                     try {
                         for (com.stecker.mqttdevicecontrols.settings.Control controlSetting:controlSettings) {
-                            mqttAndroidClient.subscribe(controlSetting.MQTTtopic, 0);
+                            mqttAndroidClient.subscribe(controlSetting.MQTTtopics.get(0).getRecv(), 0);
 
-                            if (!(controlSetting.MQTTtopic2 == null || "".equals(controlSetting.MQTTtopic2))) {
-                                mqttAndroidClient.subscribe(controlSetting.MQTTtopic2, 0);
+                            if (controlSetting.MQTTtopics.size() > 1 && !"".equals(controlSetting.MQTTtopics.get(1).getRecv())) {
+                                mqttAndroidClient.subscribe(controlSetting.MQTTtopics.get(1).getRecv(), 0);
                             }
                         }
 
@@ -128,22 +128,38 @@ public class MQTTClient {
                     String payload = new String(message.getPayload());
                     Log.println(Log.ASSERT,"Mqtt","Incoming message from [" + topic + "]: " + payload);
 
+                    int topicIndex;
                     for (com.stecker.mqttdevicecontrols.settings.Control controlSetting:controlSettings) {
-
-                        if (controlSetting.MQTTtopic.equals(topic) || topic.equals(controlSetting.MQTTtopic2)) {
-                            // Log.println(Log.ASSERT, "Mqtt", "processing...");
-                            if (controlSetting.state.autodecode(payload)) {
-                                // Log.println(Log.ASSERT,"Mqtt","Decoded successful!");
-
-                                int state = Control.STATUS_OK;
-                                updatePublisher.onNext(jca.getStatefulDeviceControl(ctx, controlSetting, state));
-
-                                //Log.println(Log.ASSERT,"Mqtt","Updated ControlTemplate to " + s.autodecode);
-                            } else {
-                                Log.println(Log.ASSERT,"Mqtt","Error while decoding \"" + payload + "\" from [" + topic + "]");
-
+                        try {
+                            topicIndex = -1;
+                            Log.println(Log.ASSERT, "Mqtt", "checking " + controlSetting.title);
+                            for (int i = 0; i<controlSetting.MQTTtopics.size(); i++) {
+                                if (controlSetting.MQTTtopics.get(i).getRecv().equals(topic)) {
+                                    topicIndex = i;
+                                    Log.println(Log.ASSERT, "Mqtt", "Found" + i);
+                                    break;
+                                }
                             }
 
+
+                            if (topicIndex != -1) {
+                            Log.println(Log.ASSERT, "Mqtt", "processing...");
+
+                                if (controlSetting.state.autodecode(payload)) {
+                                    Log.println(Log.ASSERT, "Mqtt", "Decoded successful!");
+
+                                    int state = Control.STATUS_OK;
+                                    updatePublisher.onNext(jca.getStatefulDeviceControl(ctx, controlSetting, state));
+
+                                    //Log.println(Log.ASSERT,"Mqtt","Updated ControlTemplate to " + s.autodecode);
+                                } else {
+                                    Log.println(Log.ASSERT, "Mqtt", "Error while decoding \"" + payload + "\" from [" + topic + "]");
+
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            Log.e("recv", e.getLocalizedMessage());
                         }
 
                     }
