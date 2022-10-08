@@ -65,7 +65,7 @@ public class JSONControlAdaptor {
                 //Log.println(Log.ASSERT, "jca", "toggletemplate state: " + state.booleanState);
                 ct = new ToggleTemplate(
                         control.controlID + control.template.templateType,
-                        new ControlButton(state.booleanState, control.template.actionDescription));
+                        new ControlButton(state.booleanState, "toggleTemplate"));
 
                 break;
             case "rangetemplate":
@@ -81,7 +81,7 @@ public class JSONControlAdaptor {
 
                 break;
             case "togglerangetemplate":
-                ControlButton cb = new ControlButton(state.booleanState, control.template.actionDescription);
+                ControlButton cb = new ControlButton(state.booleanState, "toggleRange");
                 RangeTemplate rt = new RangeTemplate(
                         control.controlID + control.template.templateType,
                         control.template.minValue,

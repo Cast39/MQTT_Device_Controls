@@ -15,7 +15,6 @@ public class Template {
     public String formatString = null;
 
     // ToggleTemplate & ToggleRangeTemplate
-    public String actionDescription = null;
     public String onCommand = null;
     public String offCommand = null;
 

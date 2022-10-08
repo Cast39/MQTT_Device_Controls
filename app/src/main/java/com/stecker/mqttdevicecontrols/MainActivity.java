@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         c.MQTTtopics.add(new MQTTtopic("home/room1/outlet1/state"));
         c.title = "\uD83D\uDE3B";
         c.template = new Toggletemplate();
-        c.template.actionDescription = "BUTTON";
         s.controls.add(c);
 
         c = new Control();
@@ -91,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         c.MQTTtopics.add(new MQTTtopic("home/room2/ceilinglight/state"));
         c.title = "\uD83D\uDE3B";
         c.template = new Toggletemplate();
-        c.template.actionDescription = "BUTTON";
         c.template.onCommand = "on";
         c.template.offCommand = "off";
         s.controls.add(c);
@@ -105,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         c.title = "Fan";
         c.subtitle = "ToggleRange";
         c.template = new ToggleRangetemplate();
-        c.template.actionDescription = "BUTTON";
         c.template.onCommand = "on";
         c.template.offCommand = "off";
         s.controls.add(c);
@@ -117,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
         c.MQTTtopics.add(new MQTTtopic("home/living_room/ceilinglight/state"));
         c.title = "Ceiling Light";
         c.template = new Toggletemplate();
-        c.template.actionDescription = "BUTTON";
         s.controls.add(c);
 
         c = new Control();
@@ -127,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
         c.MQTTtopics.add(new MQTTtopic("home/dining_room/ceilinglight/state"));
         c.title = "Ceiling Light";
         c.template = new Toggletemplate();
-        c.template.actionDescription = "BUTTON";
         c.template.onCommand = "switch mode!";
         c.template.offCommand = "";
         s.controls.add(c);

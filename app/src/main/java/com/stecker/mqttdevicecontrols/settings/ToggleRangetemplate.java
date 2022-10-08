@@ -3,7 +3,6 @@ package com.stecker.mqttdevicecontrols.settings;
 public class ToggleRangetemplate extends Template {
     public ToggleRangetemplate() {
         super.templateType = "togglerangetemplate";
-        super.actionDescription = "";
         super.onCommand = "true";
         super.offCommand = "false";
 
