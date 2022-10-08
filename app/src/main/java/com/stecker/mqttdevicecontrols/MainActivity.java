@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public LinkedList<Server> getBaseConfig() {
         LinkedList<Server> servers = new LinkedList<>();
         Server s = new Server();
-        s.url = "test.mosquitto.org";
+        s.url = "public.mqtthq.com";
 
         Control c = new Control();
         c.structure = "Category1";
